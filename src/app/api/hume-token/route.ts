@@ -1,54 +1,51 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Hume Token Endpoint
  * Fetches an access token from Hume API for WebSocket authentication
+ * Uses Basic auth header (not body params) - this is the correct pattern
  */
 export async function GET() {
+  const apiKey = process.env.HUME_API_KEY || '';
+  const secretKey = process.env.HUME_SECRET_KEY || '';
+
+  if (!apiKey || !secretKey) {
+    console.error('Missing Hume credentials');
+    return NextResponse.json(
+      { error: 'Hume API credentials not configured' },
+      { status: 500 }
+    );
+  }
+
   try {
-    const apiKey = process.env.HUME_API_KEY;
-    const secretKey = process.env.HUME_SECRET_KEY;
+    // Use Basic auth header (not body params) - this is the correct pattern
+    const authString = Buffer.from(`${apiKey}:${secretKey}`).toString('base64');
 
-    if (!apiKey || !secretKey) {
-      return NextResponse.json(
-        { error: 'Hume API credentials not configured' },
-        { status: 500 }
-      );
-    }
-
-    // Fetch access token from Hume
     const response = await fetch('https://api.hume.ai/oauth2-cc/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${authString}`,
       },
-      body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: apiKey,
-        client_secret: secretKey,
-      }),
+      body: new URLSearchParams({ grant_type: 'client_credentials' }),
     });
 
     if (!response.ok) {
       const error = await response.text();
       console.error('Hume token error:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch Hume access token' },
+        { error: 'Failed to get Hume token', details: error },
         { status: response.status }
       );
     }
 
     const data = await response.json();
-
-    return NextResponse.json({
-      accessToken: data.access_token,
-      expiresIn: data.expires_in,
-    });
-  } catch (error) {
-    console.error('Hume token endpoint error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ accessToken: data.access_token });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Hume token error:', error);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
