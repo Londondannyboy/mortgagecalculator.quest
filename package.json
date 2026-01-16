@@ -14,15 +14,22 @@
     "@copilotkit/react-core": "latest",
     "@copilotkit/react-ui": "latest",
     "@copilotkit/runtime": "latest",
+    "@humeai/voice-react": "^0.2.11",
+    "@neondatabase/serverless": "^1.0.2",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
     "next": "^16.1.2",
+    "openai": "^5.23.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "recharts": "^3.6.0"
   },
   "devDependencies": {
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "concurrently": "^9.0.0",
+    "drizzle-kit": "^0.31.8",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

@@ -1,9 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { CopilotSidebar } from "@copilotkit/react-ui";
 import { useCoAgent, useRenderToolCall } from "@copilotkit/react-core";
 import { MortgageCalculator } from "@/components/MortgageCalculator";
 import { MortgageResultCard } from "@/components/MortgageResultCard";
+import { VoiceWidget } from "@/components/VoiceWidget";
+import { MortgageTimeline } from "@/components/MortgageTimeline";
+import { AmortizationChart } from "@/components/AmortizationChart";
+import { OverpaymentSimulator } from "@/components/OverpaymentSimulator";
 
 interface MortgageState {
   principal: number;
@@ -15,7 +20,11 @@ interface MortgageState {
   stamp_duty: number | null;
 }
 
+type TabType = 'calculator' | 'timeline' | 'amortization' | 'overpayment';
+
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<TabType>('calculator');
+
   const { state, setState } = useCoAgent<MortgageState>({
     name: "mortgage_agent",
     initialState: {
@@ -28,6 +37,13 @@ export default function Home() {
       stamp_duty: null,
     },
   });
+
+  // Calculate monthly payment for visualizations
+  const monthlyPayment = state?.monthly_payment || calculateMonthlyPayment(
+    state?.principal || 300000,
+    state?.interest_rate || 4.5,
+    state?.term_years || 25
+  );
 
   // Render mortgage calculation results in chat
   useRenderToolCall({
@@ -67,18 +83,29 @@ export default function Home() {
     You are a UK mortgage calculator assistant helping homebuyers understand their mortgage options.
 
     Current calculator values:
-    - Loan Amount: £${state.principal?.toLocaleString() || 'Not set'}
-    - Interest Rate: ${state.interest_rate || 'Not set'}%
-    - Term: ${state.term_years || 'Not set'} years
+    - Loan Amount: £${state?.principal?.toLocaleString() || 'Not set'}
+    - Interest Rate: ${state?.interest_rate || 'Not set'}%
+    - Term: ${state?.term_years || 'Not set'} years
+    ${state?.monthly_payment ? `- Monthly Payment: £${state.monthly_payment.toLocaleString()}` : ''}
 
     You can help users:
     1. Calculate monthly mortgage payments
     2. Calculate UK stamp duty
     3. Compare different mortgage scenarios
     4. Explain mortgage concepts
+    5. Show timeline to mortgage freedom
+    6. Analyze overpayment scenarios
 
     Always use the appropriate tools to perform calculations rather than estimating.
+    Be conversational and helpful. Speak naturally for voice interactions.
   `;
+
+  const tabs: { id: TabType; label: string; icon: string }[] = [
+    { id: 'calculator', label: 'Calculator', icon: '🧮' },
+    { id: 'timeline', label: 'Timeline', icon: '📈' },
+    { id: 'amortization', label: 'Breakdown', icon: '📊' },
+    { id: 'overpayment', label: 'Overpayments', icon: '💰' },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -86,10 +113,10 @@ export default function Home() {
         instructions={instructions}
         labels={{
           title: "Mortgage Assistant",
-          initial: "Hi! I can help you calculate mortgage payments, stamp duty, and more. What would you like to know?",
+          initial: "Hi! I can help you calculate mortgage payments, stamp duty, and plan your path to mortgage freedom. What would you like to know?",
         }}
       >
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-8 max-w-6xl">
           <header className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
               Mortgage Calculator
@@ -99,12 +126,113 @@ export default function Home() {
             </p>
           </header>
 
-          <MortgageCalculator
-            state={state}
-            onStateChange={(updates) => setState((prev) => ({ ...prev, ...updates }))}
-          />
+          {/* Tab Navigation */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-lg">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`
+                    px-4 py-2 rounded-lg text-sm font-medium transition-all
+                    ${activeTab === tab.id
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }
+                  `}
+                >
+                  <span className="mr-1">{tab.icon}</span>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          <div className="space-y-8">
+            {activeTab === 'calculator' && state && (
+              <MortgageCalculator
+                state={state}
+                onStateChange={(updates) => setState((prev) => ({ ...state, ...prev, ...updates }))}
+              />
+            )}
+
+            {activeTab === 'timeline' && (
+              <MortgageTimeline
+                principal={state?.principal || 300000}
+                interestRate={state?.interest_rate || 4.5}
+                termYears={state?.term_years || 25}
+              />
+            )}
+
+            {activeTab === 'amortization' && (
+              <AmortizationChart
+                principal={state?.principal || 300000}
+                interestRate={state?.interest_rate || 4.5}
+                termYears={state?.term_years || 25}
+              />
+            )}
+
+            {activeTab === 'overpayment' && (
+              <OverpaymentSimulator
+                principal={state?.principal || 300000}
+                interestRate={state?.interest_rate || 4.5}
+                termYears={state?.term_years || 25}
+                monthlyPayment={monthlyPayment}
+              />
+            )}
+          </div>
+
+          {/* Quick Stats Footer */}
+          {state && (
+            <div className="mt-8 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Loan Amount</p>
+                  <p className="text-lg font-bold text-gray-800 dark:text-white">
+                    £{(state.principal || 0).toLocaleString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Interest Rate</p>
+                  <p className="text-lg font-bold text-gray-800 dark:text-white">
+                    {state.interest_rate || 0}%
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Term</p>
+                  <p className="text-lg font-bold text-gray-800 dark:text-white">
+                    {state.term_years || 0} years
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Monthly Payment</p>
+                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                    £{monthlyPayment.toLocaleString('en-GB', { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </CopilotSidebar>
+
+      {/* Voice Widget - Outside CopilotSidebar */}
+      <VoiceWidget />
     </div>
   );
+}
+
+// Helper function to calculate monthly payment
+function calculateMonthlyPayment(principal: number, annualRate: number, termYears: number): number {
+  const monthlyRate = annualRate / 100 / 12;
+  const totalMonths = termYears * 12;
+
+  if (monthlyRate === 0) {
+    return principal / totalMonths;
+  }
+
+  return principal * (
+    monthlyRate * Math.pow(1 + monthlyRate, totalMonths)
+  ) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
 }
