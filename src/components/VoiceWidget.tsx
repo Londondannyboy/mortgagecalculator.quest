@@ -1,7 +1,7 @@
 'use client';
 
-import { VoiceProvider, useVoice, VoiceReadyState } from '@humeai/voice-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { VoiceProvider, useVoice } from '@humeai/voice-react';
 
 interface VoiceWidgetProps {
   variant?: 'fixed' | 'inline';
@@ -9,222 +9,134 @@ interface VoiceWidgetProps {
 }
 
 /**
- * Voice Controls - The actual button and UI
+ * Voice Button - Uses useVoice hook inside VoiceProvider
  */
-function VoiceControls({
-  accessToken,
-  configId,
-  variant = 'fixed',
-  size = 'lg'
-}: {
-  accessToken: string;
-  configId: string;
-  variant?: 'fixed' | 'inline';
-  size?: 'sm' | 'md' | 'lg';
-}) {
-  const {
-    connect,
-    disconnect,
-    readyState,
-    isMuted,
-    mute,
-    unmute,
-    fft,
-    micFft,
-    isPlaying,
-    error,
-  } = useVoice();
+function VoiceButton({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
+  const { connect, disconnect, status, error } = useVoice();
+  const [isPending, setIsPending] = useState(false);
 
-  const isConnected = readyState === VoiceReadyState.OPEN;
-  const isConnecting = readyState === VoiceReadyState.CONNECTING;
+  const isConnected = status.value === 'connected';
+  const isConnecting = status.value === 'connecting';
 
-  // Calculate audio amplitude for visual feedback
-  const getAmplitude = useCallback((fftValues: number[] | undefined): number => {
-    if (!fftValues || fftValues.length === 0) return 0;
-    const sum = fftValues.reduce((acc, val) => acc + Math.abs(val), 0);
-    const avg = sum / fftValues.length;
-    return Math.min(avg / 50, 1);
-  }, []);
-
-  const amplitude = getAmplitude(isConnected ? (isPlaying ? fft : micFft) : micFft);
-
-  const handleToggle = async () => {
-    if (isConnected) {
-      await disconnect();
-    } else {
-      await connect({
-        auth: { type: 'accessToken', value: accessToken },
-        configId: configId,
-      });
-    }
-  };
-
-  // Size configurations
-  const sizes = {
-    sm: { button: 'w-10 h-10', icon: 'w-5 h-5', mute: 'w-8 h-8', muteIcon: 'w-4 h-4' },
-    md: { button: 'w-12 h-12', icon: 'w-6 h-6', mute: 'w-9 h-9', muteIcon: 'w-4 h-4' },
-    lg: { button: 'w-16 h-16', icon: 'w-7 h-7', mute: 'w-10 h-10', muteIcon: 'w-5 h-5' },
-  };
-
-  const sizeConfig = sizes[size];
-
-  const wrapperClass = variant === 'fixed'
-    ? 'fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2'
-    : 'flex items-center gap-3';
-
-  return (
-    <div className={wrapperClass}>
-      {/* Error indicator - only show in fixed mode */}
-      {variant === 'fixed' && error && (
-        <div className="bg-red-500 text-white text-xs px-3 py-1 rounded-full shadow-lg max-w-48 truncate">
-          {error.message}
-        </div>
-      )}
-
-      {/* Status indicator */}
-      {isConnected && !error && (
-        <div className={`bg-gray-900 text-white text-xs px-3 py-1 rounded-full shadow-lg ${variant === 'inline' ? 'order-last' : ''}`}>
-          {isMuted ? 'Muted' : isPlaying ? 'Speaking...' : 'Listening...'}
-        </div>
-      )}
-
-      {/* Mute button (only when connected) */}
-      {isConnected && (
-        <button
-          onClick={() => isMuted ? unmute() : mute()}
-          className={`${sizeConfig.mute} rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center shadow-md`}
-          title={isMuted ? 'Unmute' : 'Mute'}
-        >
-          {isMuted ? (
-            <MicOffIcon className={`${sizeConfig.muteIcon} text-red-500`} />
-          ) : (
-            <MicIcon className={`${sizeConfig.muteIcon} text-gray-600 dark:text-gray-300`} />
-          )}
-        </button>
-      )}
-
-      {/* Main voice button */}
-      <button
-        onClick={handleToggle}
-        disabled={isConnecting}
-        className={`
-          relative ${sizeConfig.button} rounded-full shadow-xl transition-all duration-300
-          flex items-center justify-center
-          ${isConnected
-            ? 'bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700'
-            : 'bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-          }
-          ${isConnecting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-        `}
-        title={isConnected ? 'Stop voice chat' : 'Start voice chat'}
-      >
-        {/* Audio amplitude ring */}
-        {isConnected && (
-          <div
-            className="absolute inset-0 rounded-full border-4 border-white/50 transition-transform duration-100"
-            style={{
-              transform: `scale(${1 + amplitude * 0.3})`,
-              opacity: 0.5 + amplitude * 0.5,
-            }}
-          />
-        )}
-
-        {/* Icon */}
-        {isConnecting ? (
-          <LoadingIcon className={`${sizeConfig.icon} text-white animate-spin`} />
-        ) : isConnected ? (
-          <PhoneOffIcon className={`${sizeConfig.icon} text-white`} />
-        ) : (
-          <PhoneIcon className={`${sizeConfig.icon} text-white`} />
-        )}
-      </button>
-
-      {/* Label - only in fixed mode */}
-      {variant === 'fixed' && (
-        <span className="text-xs text-gray-500 dark:text-gray-400">
-          {isConnecting ? 'Connecting...' : isConnected ? 'End call' : 'Voice chat'}
-        </span>
-      )}
-    </div>
-  );
-}
-
-/**
- * VoiceWidget - Wrapper with VoiceProvider
- */
-export function VoiceWidget({ variant = 'fixed', size = 'lg' }: VoiceWidgetProps) {
-  const [accessToken, setAccessToken] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  const configId = process.env.NEXT_PUBLIC_HUME_CONFIG_ID || '';
-
-  // Size configurations for loading/error states
   const sizes = {
     sm: { button: 'w-10 h-10', icon: 'w-5 h-5' },
     md: { button: 'w-12 h-12', icon: 'w-6 h-6' },
-    lg: { button: 'w-16 h-16', icon: 'w-6 h-6' },
+    lg: { button: 'w-16 h-16', icon: 'w-7 h-7' },
   };
   const sizeConfig = sizes[size];
 
-  useEffect(() => {
-    async function fetchToken() {
-      try {
-        setIsLoading(true);
-        const response = await fetch('/api/hume-token');
-        const data = await response.json();
+  const handleToggle = useCallback(async () => {
+    if (isConnected) {
+      console.log('🔴 Disconnecting voice...');
+      disconnect();
+      return;
+    }
 
-        if (data.error) {
-          setError(data.error);
-        } else {
-          setAccessToken(data.accessToken);
-        }
-      } catch (err) {
-        setError('Failed to initialize voice');
-        console.error('Voice init error:', err);
-      } finally {
-        setIsLoading(false);
+    setIsPending(true);
+    try {
+      console.log('🎤 Fetching Hume token...');
+      const res = await fetch('/api/hume-token');
+      const data = await res.json();
+
+      if (data.error) {
+        console.error('🔴 Token error:', data.error);
+        alert(`Voice error: ${data.error}`);
+        return;
       }
+
+      console.log('🎤 Got token, connecting...');
+      const configId = process.env.NEXT_PUBLIC_HUME_CONFIG_ID || '';
+
+      if (!configId) {
+        console.error('🔴 No HUME_CONFIG_ID');
+        alert('Voice not configured - missing config ID');
+        return;
+      }
+
+      await connect({
+        auth: { type: 'accessToken', value: data.accessToken },
+        configId: configId,
+        sessionSettings: {
+          type: 'session_settings',
+          systemPrompt: `You are a UK mortgage calculator voice assistant.
+Your role is to help homebuyers:
+1. Calculate monthly mortgage payments
+2. Calculate UK stamp duty land tax
+3. Compare different mortgage scenarios
+4. Explain mortgage concepts clearly
+
+IMPORTANT RULES:
+- Keep responses SHORT for voice - 2-3 sentences max
+- Use British English and UK-specific terminology
+- All amounts are in GBP (£)
+- Speak numbers naturally (e.g., "three hundred thousand pounds")
+- Be warm and conversational`,
+        },
+      });
+      console.log('🟢 Voice connected!');
+    } catch (e) {
+      console.error('🔴 Voice connect error:', e);
+      alert(`Failed to connect: ${e}`);
+    } finally {
+      setIsPending(false);
     }
-
-    if (configId) {
-      fetchToken();
-    } else {
-      setIsLoading(false);
-      setError('Voice not configured');
-    }
-  }, [configId]);
-
-  const wrapperClass = variant === 'fixed' ? 'fixed bottom-6 right-6 z-50' : '';
-
-  if (isLoading) {
-    return (
-      <div className={wrapperClass}>
-        <div className={`${sizeConfig.button} rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}>
-          <LoadingIcon className={`${sizeConfig.icon} text-gray-400 animate-spin`} />
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !accessToken || !configId) {
-    return (
-      <div className={wrapperClass}>
-        <button
-          className={`${sizeConfig.button} rounded-full bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center shadow-lg hover:from-gray-500 hover:to-gray-600 transition-all cursor-pointer`}
-          title={error || 'Voice not configured - click to retry'}
-          onClick={() => window.location.reload()}
-        >
-          <MicOffIcon className={`${sizeConfig.icon} text-white`} />
-        </button>
-      </div>
-    );
-  }
+  }, [connect, disconnect, isConnected]);
 
   return (
-    <VoiceProvider>
-      <VoiceControls accessToken={accessToken} configId={configId} variant={variant} size={size} />
-    </VoiceProvider>
+    <button
+      onClick={handleToggle}
+      disabled={isPending || isConnecting}
+      className={`
+        ${sizeConfig.button} rounded-full flex items-center justify-center
+        transition-all shadow-lg
+        ${isConnected
+          ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+          : isPending || isConnecting
+          ? 'bg-gray-400 cursor-not-allowed'
+          : 'bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+        }
+      `}
+      title={isConnected ? 'Stop voice chat' : error ? `Error: ${error.message}` : 'Start voice chat'}
+    >
+      {isPending || isConnecting ? (
+        <LoadingIcon className={`${sizeConfig.icon} text-white animate-spin`} />
+      ) : isConnected ? (
+        <StopIcon className={`${sizeConfig.icon} text-white`} />
+      ) : (
+        <MicIcon className={`${sizeConfig.icon} text-white`} />
+      )}
+    </button>
+  );
+}
+
+// Stable handlers to prevent VoiceProvider remounting
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleError = (err: any) => console.error('🔴 Hume Error:', err?.message || err);
+const handleOpen = () => console.log('🟢 Hume WebSocket opened');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleClose = (e: any) => console.log('🟡 Hume closed:', e?.code, e?.reason);
+
+/**
+ * VoiceWidget - Main export with VoiceProvider wrapper
+ */
+export function VoiceWidget({ variant = 'fixed', size = 'lg' }: VoiceWidgetProps) {
+  const wrapperClass = variant === 'fixed'
+    ? 'fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2'
+    : 'flex items-center gap-2';
+
+  return (
+    <div className={wrapperClass}>
+      <VoiceProvider
+        onError={handleError}
+        onOpen={handleOpen}
+        onClose={handleClose}
+      >
+        <VoiceButton size={size} />
+      </VoiceProvider>
+      {variant === 'fixed' && (
+        <span className="text-xs text-gray-500">Voice</span>
+      )}
+    </div>
   );
 }
 
@@ -237,26 +149,10 @@ function MicIcon({ className }: { className?: string }) {
   );
 }
 
-function MicOffIcon({ className }: { className?: string }) {
+function StopIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19 19L5 5m14 0v1.5a6 6 0 01-.34 2M12 18.75a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 015.83-1.12" />
-    </svg>
-  );
-}
-
-function PhoneIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-    </svg>
-  );
-}
-
-function PhoneOffIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08a.956.956 0 01-.29-.7c0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.1-.7-.28-.79-.73-1.68-1.36-2.66-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />
     </svg>
   );
 }
