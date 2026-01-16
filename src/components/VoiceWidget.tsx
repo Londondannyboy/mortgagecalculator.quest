@@ -1,22 +1,59 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { VoiceProvider, useVoice } from '@humeai/voice-react';
+
+const CONFIG_ID = process.env.NEXT_PUBLIC_HUME_CONFIG_ID || '';
+
+// Debug helper
+const debug = (area: string, message: string, data?: unknown) => {
+  const timestamp = new Date().toLocaleTimeString();
+  const prefix = `[Hume ${timestamp}]`;
+  if (data !== undefined) {
+    console.log(`${prefix} ${area}: ${message}`, data);
+  } else {
+    console.log(`${prefix} ${area}: ${message}`);
+  }
+};
+
+interface UserContext {
+  id?: string;
+  name?: string;
+  email?: string;
+}
 
 interface VoiceWidgetProps {
   variant?: 'fixed' | 'inline';
   size?: 'sm' | 'md' | 'lg';
+  user?: UserContext;
 }
 
 /**
- * Voice Button - Uses useVoice hook inside VoiceProvider
+ * Inner Voice Button - Uses useVoice hook (must be inside VoiceProvider)
+ * Pattern matches relocation.quest VoiceChatSyncInner
  */
-function VoiceButton({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
-  const { connect, disconnect, status, error } = useVoice();
+function VoiceButtonInner({
+  accessToken,
+  size = 'md',
+  user,
+}: {
+  accessToken: string;
+  size?: 'sm' | 'md' | 'lg';
+  user?: UserContext;
+}) {
+  const { connect, disconnect, status, sendUserInput } = useVoice();
   const [isPending, setIsPending] = useState(false);
 
   const isConnected = status.value === 'connected';
-  const isConnecting = status.value === 'connecting';
+
+  // Debug status changes
+  useEffect(() => {
+    debug('Status', `Connection state: ${status.value}`, {
+      isConnected,
+      userName: user?.name || 'Guest',
+      configId: CONFIG_ID,
+    });
+  }, [status.value, isConnected, user]);
 
   const sizes = {
     sm: { button: 'w-10 h-10', icon: 'w-5 h-5' },
@@ -27,78 +64,110 @@ function VoiceButton({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 
   const handleToggle = useCallback(async () => {
     if (isConnected) {
-      console.log('🔴 Disconnecting voice...');
+      debug('Action', 'Disconnecting...');
       disconnect();
       return;
     }
 
     setIsPending(true);
-    try {
-      console.log('🎤 Fetching Hume token...');
-      const res = await fetch('/api/hume-token');
-      const data = await res.json();
 
-      if (data.error) {
-        console.error('🔴 Token error:', data.error);
-        alert(`Voice error: ${data.error}`);
-        return;
+    // Fetch user context from ZEP if user is logged in
+    let zepContext = '';
+    if (user?.id) {
+      debug('Zep', `Fetching context for userId: ${user.id}`);
+      try {
+        const zepRes = await fetch(`/api/zep/user?userId=${user.id}`);
+        const zepData = await zepRes.json();
+        if (zepData.isReturningUser && zepData.facts?.length > 0) {
+          const facts = zepData.facts.slice(0, 5).map((f: { fact?: string }) => f.fact).filter(Boolean).join('; ');
+          zepContext = `\n\nUSER CONTEXT:\nThis is a returning user. What you know about them: ${facts}`;
+          debug('Zep', `Got context: ${facts.substring(0, 100)}...`);
+        } else {
+          debug('Zep', 'No context found for user');
+        }
+      } catch (e) {
+        debug('Zep', 'Failed to fetch context', e);
       }
+    }
 
-      console.log('🎤 Got token, connecting...');
-      const configId = process.env.NEXT_PUBLIC_HUME_CONFIG_ID || '';
+    // Build personalized system prompt
+    const userName = user?.name || 'Guest';
+    const greeting = user?.name
+      ? `The user's name is ${user.name}. Greet them warmly by name.`
+      : 'This is a guest user. Greet them warmly.';
 
-      if (!configId) {
-        console.error('🔴 No HUME_CONFIG_ID');
-        alert('Voice not configured - missing config ID');
-        return;
-      }
-
-      await connect({
-        auth: { type: 'accessToken', value: data.accessToken },
-        configId: configId,
-        sessionSettings: {
-          type: 'session_settings',
-          systemPrompt: `You are a UK mortgage calculator voice assistant.
+    const systemPrompt = `You are a UK mortgage calculator voice assistant.
 Your role is to help homebuyers:
 1. Calculate monthly mortgage payments
 2. Calculate UK stamp duty land tax
 3. Compare different mortgage scenarios
 4. Explain mortgage concepts clearly
 
+${greeting}${zepContext}
+
 IMPORTANT RULES:
 - Keep responses SHORT for voice - 2-3 sentences max
 - Use British English and UK-specific terminology
 - All amounts are in GBP (£)
 - Speak numbers naturally (e.g., "three hundred thousand pounds")
-- Be warm and conversational`,
+- Be warm and conversational`;
+
+    // Session ID for tracking
+    const sessionId = user?.id
+      ? `mortgage_${user.id}`
+      : `guest_${Date.now()}`;
+
+    debug('Action', '================================');
+    debug('Action', `Connecting as: ${userName}`);
+    debug('Action', `User ID: ${user?.id || 'none'}`);
+    debug('Action', `Session ID: ${sessionId}`);
+    debug('Action', `Config ID: ${CONFIG_ID}`);
+    debug('Action', '================================');
+
+    try {
+      // Connect with sessionSettings (matches relocation.quest pattern exactly)
+      await connect({
+        auth: { type: 'accessToken' as const, value: accessToken },
+        configId: CONFIG_ID,
+        sessionSettings: {
+          type: 'session_settings' as const,
+          systemPrompt,
+          customSessionId: sessionId,
         },
       });
-      console.log('🟢 Voice connected!');
+
+      debug('Action', 'Connected successfully!');
+
+      // Auto-greet after connection - send a greeting trigger
+      setTimeout(() => {
+        debug('Action', 'Sending greeting trigger');
+        sendUserInput('speak your greeting');
+      }, 500);
+
     } catch (e) {
-      console.error('🔴 Voice connect error:', e);
-      alert(`Failed to connect: ${e}`);
-    } finally {
-      setIsPending(false);
+      debug('Error', 'Connection failed', e);
     }
-  }, [connect, disconnect, isConnected]);
+
+    setIsPending(false);
+  }, [connect, disconnect, isConnected, accessToken, user, sendUserInput]);
 
   return (
     <button
       onClick={handleToggle}
-      disabled={isPending || isConnecting}
+      disabled={isPending}
       className={`
         ${sizeConfig.button} rounded-full flex items-center justify-center
         transition-all shadow-lg
         ${isConnected
           ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-          : isPending || isConnecting
+          : isPending
           ? 'bg-gray-400 cursor-not-allowed'
           : 'bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
         }
       `}
-      title={isConnected ? 'Stop voice chat' : error ? `Error: ${error.message}` : 'Start voice chat'}
+      title={isConnected ? 'Stop voice chat' : 'Start voice chat'}
     >
-      {isPending || isConnecting ? (
+      {isPending ? (
         <LoadingIcon className={`${sizeConfig.icon} text-white animate-spin`} />
       ) : isConnected ? (
         <StopIcon className={`${sizeConfig.icon} text-white`} />
@@ -109,29 +178,74 @@ IMPORTANT RULES:
   );
 }
 
-// Stable handlers to prevent VoiceProvider remounting
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handleError = (err: any) => console.error('🔴 Hume Error:', err?.message || err);
-const handleOpen = () => console.log('🟢 Hume WebSocket opened');
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handleClose = (e: any) => console.log('🟡 Hume closed:', e?.code, e?.reason);
-
 /**
- * VoiceWidget - Main export with VoiceProvider wrapper
+ * VoiceWidget - Main export
+ * Pattern matches relocation.quest VoiceChatProvider:
+ * 1. Fetch token on mount
+ * 2. Only render VoiceProvider once token is available
+ * 3. Pass token as prop to inner component
  */
-export function VoiceWidget({ variant = 'fixed', size = 'lg' }: VoiceWidgetProps) {
+export function VoiceWidget({ variant = 'fixed', size = 'lg', user }: VoiceWidgetProps) {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch token on mount (NOT on click)
+  useEffect(() => {
+    debug('Init', 'Fetching Hume token...');
+    fetch('/api/hume-token')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.accessToken) {
+          debug('Init', 'Token received successfully');
+          setAccessToken(data.accessToken);
+        } else {
+          debug('Error', 'No token in response', data);
+          setError(data.error || 'No token');
+        }
+      })
+      .catch((err) => {
+        debug('Error', 'Token fetch failed', err);
+        setError(err.message);
+      });
+  }, []);
+
   const wrapperClass = variant === 'fixed'
     ? 'fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2'
     : 'flex items-center gap-2';
 
+  // Show error state
+  if (error) {
+    return (
+      <div className={wrapperClass}>
+        <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center" title={error}>
+          <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while fetching token
+  if (!accessToken) {
+    return (
+      <div className={wrapperClass}>
+        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+          <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  // Only render VoiceProvider once we have the token
   return (
     <div className={wrapperClass}>
       <VoiceProvider
-        onError={handleError}
-        onOpen={handleOpen}
-        onClose={handleClose}
+        onError={(err) => debug('Error', 'VoiceProvider error:', err)}
+        onOpen={() => debug('Status', 'VoiceProvider opened')}
+        onClose={(e) => debug('Status', 'VoiceProvider closed:', e)}
       >
-        <VoiceButton size={size} />
+        <VoiceButtonInner accessToken={accessToken} size={size} user={user} />
       </VoiceProvider>
       {variant === 'fixed' && (
         <span className="text-xs text-gray-500">Voice</span>
