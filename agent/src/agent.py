@@ -404,7 +404,15 @@ async def chat_completions(request: Request):
         # Run the agent
         deps = StateDeps(MortgageState())
         result = await agent.run(user_message, deps=deps)
-        response_text = result.data if hasattr(result, 'data') else str(result)
+
+        # Extract clean text from result - Pydantic AI AgentRunResult
+        # Check .data first (this is the standard attribute for text response)
+        if hasattr(result, 'data') and result.data:
+            response_text = str(result.data)
+        elif hasattr(result, 'output'):
+            response_text = str(result.output)
+        else:
+            response_text = str(result)
 
         if stream:
             # Streaming response
