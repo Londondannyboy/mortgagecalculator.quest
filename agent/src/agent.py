@@ -1,11 +1,16 @@
 """
 Mortgage Calculator Agent - Pydantic AI agent for UK mortgage calculations.
+Includes CLM endpoint for Hume voice integration.
 """
 import os
-from typing import Optional
+import json
+from typing import Optional, AsyncGenerator
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.ag_ui import StateDeps
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -51,7 +56,7 @@ ADDITIONAL_PROPERTY_SURCHARGE = 0.03  # 3% surcharge
 
 agent = Agent(
     'google-gla:gemini-2.0-flash',
-    system_prompt="""You are a UK mortgage calculator assistant.
+    system_prompt="""You are a UK mortgage calculator voice assistant.
 
 Your role is to help homebuyers:
 1. Calculate monthly mortgage payments
@@ -62,10 +67,11 @@ Your role is to help homebuyers:
 IMPORTANT RULES:
 - Always use the appropriate tools to perform calculations
 - Never estimate or guess - use the calculator tools
-- Provide clear explanations with the results
+- Provide clear, conversational explanations
 - Use British English and UK-specific terminology
 - All amounts are in GBP (£)
-- Interest rates are annual percentages
+- Keep responses concise for voice - 2-3 sentences max
+- When giving numbers, speak them naturally (e.g., "three hundred thousand pounds")
 
 When users ask about mortgages, proactively offer to calculate payments.
 When users mention property values, offer to calculate stamp duty.
@@ -307,10 +313,190 @@ async def calculate_affordability(
 
 
 # =============================================================================
-# Expose as AG-UI endpoint
+# FastAPI App with CLM endpoint for Hume
 # =============================================================================
 
-app = agent.to_ag_ui(deps=StateDeps(MortgageState()))
+# Create main FastAPI app
+app = FastAPI(
+    title="Mortgage Calculator Agent",
+    description="UK Mortgage Calculator with AI Assistant and Voice Support",
+    version="1.0.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Mount AG-UI endpoint for CopilotKit
+ag_ui_app = agent.to_ag_ui(deps=StateDeps(MortgageState()))
+app.mount("/ag-ui", ag_ui_app)
+
+
+# =============================================================================
+# CLM Endpoint for Hume Voice (OpenAI-compatible)
+# =============================================================================
+
+CLM_SYSTEM_PROMPT = """You are a friendly UK mortgage calculator voice assistant.
+
+You help homebuyers understand mortgages, calculate payments, and figure out stamp duty.
+
+VOICE GUIDELINES:
+- Keep responses SHORT (1-3 sentences max)
+- Speak numbers naturally: "three hundred thousand pounds" not "£300,000"
+- Be warm and conversational
+- Ask follow-up questions to gather needed info
+- Use British English
+
+CAPABILITIES:
+- Calculate monthly mortgage payments
+- Calculate UK stamp duty (including first-time buyer relief)
+- Compare different mortgage scenarios
+- Estimate affordability based on income
+
+When you need to calculate, ask for: property value, deposit amount, interest rate, and mortgage term.
+"""
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy", "service": "mortgage-calculator-agent"}
+
+
+@app.post("/chat/completions")
+async def chat_completions(request: Request):
+    """
+    OpenAI-compatible chat completions endpoint for Hume CLM.
+    Supports both streaming and non-streaming responses.
+    """
+    try:
+        body = await request.json()
+        messages = body.get("messages", [])
+        stream = body.get("stream", False)
+
+        # Extract user message
+        user_message = ""
+        for msg in reversed(messages):
+            if msg.get("role") == "user":
+                user_message = msg.get("content", "")
+                break
+
+        if not user_message:
+            return JSONResponse(
+                status_code=400,
+                content={"error": "No user message found"}
+            )
+
+        # Build conversation history for agent
+        conversation = [{"role": "system", "content": CLM_SYSTEM_PROMPT}]
+        for msg in messages:
+            if msg.get("role") in ["user", "assistant"]:
+                conversation.append({
+                    "role": msg["role"],
+                    "content": msg.get("content", "")
+                })
+
+        # Run the agent
+        deps = StateDeps(MortgageState())
+        result = await agent.run(user_message, deps=deps)
+        response_text = result.data if hasattr(result, 'data') else str(result)
+
+        if stream:
+            # Streaming response
+            async def generate_stream() -> AsyncGenerator[str, None]:
+                # Send the response as chunks
+                chunk_id = f"chatcmpl-{os.urandom(12).hex()}"
+
+                # Split response into words for streaming effect
+                words = response_text.split()
+                for i, word in enumerate(words):
+                    chunk = {
+                        "id": chunk_id,
+                        "object": "chat.completion.chunk",
+                        "created": int(__import__('time').time()),
+                        "model": "mortgage-calculator-agent",
+                        "choices": [{
+                            "index": 0,
+                            "delta": {
+                                "content": word + (" " if i < len(words) - 1 else "")
+                            },
+                            "finish_reason": None
+                        }]
+                    }
+                    yield f"data: {json.dumps(chunk)}\n\n"
+
+                # Send final chunk
+                final_chunk = {
+                    "id": chunk_id,
+                    "object": "chat.completion.chunk",
+                    "created": int(__import__('time').time()),
+                    "model": "mortgage-calculator-agent",
+                    "choices": [{
+                        "index": 0,
+                        "delta": {},
+                        "finish_reason": "stop"
+                    }]
+                }
+                yield f"data: {json.dumps(final_chunk)}\n\n"
+                yield "data: [DONE]\n\n"
+
+            return StreamingResponse(
+                generate_stream(),
+                media_type="text/event-stream"
+            )
+        else:
+            # Non-streaming response
+            return JSONResponse({
+                "id": f"chatcmpl-{os.urandom(12).hex()}",
+                "object": "chat.completion",
+                "created": int(__import__('time').time()),
+                "model": "mortgage-calculator-agent",
+                "choices": [{
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": response_text
+                    },
+                    "finish_reason": "stop"
+                }],
+                "usage": {
+                    "prompt_tokens": len(user_message.split()),
+                    "completion_tokens": len(response_text.split()),
+                    "total_tokens": len(user_message.split()) + len(response_text.split())
+                }
+            })
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e)}
+        )
+
+
+@app.get("/v1/models")
+async def list_models():
+    """List available models (OpenAI-compatible)."""
+    return {
+        "object": "list",
+        "data": [{
+            "id": "mortgage-calculator-agent",
+            "object": "model",
+            "created": 1700000000,
+            "owned_by": "mortgage-calculator-quest"
+        }]
+    }
+
+
+# Also support /v1/chat/completions path
+@app.post("/v1/chat/completions")
+async def v1_chat_completions(request: Request):
+    """OpenAI v1 API compatible endpoint."""
+    return await chat_completions(request)
 
 
 if __name__ == "__main__":

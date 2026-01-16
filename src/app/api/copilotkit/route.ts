@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 const runtime = new CopilotRuntime({
   agents: {
     mortgage_agent: new ExternalAgentRuntime({
-      url: process.env.AGENT_URL || "http://localhost:8000",
+      url: (process.env.AGENT_URL || "http://localhost:8000") + "/ag-ui",
     }),
   },
 });
