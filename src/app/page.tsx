@@ -109,6 +109,32 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Navbar */}
+      <nav className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <a href="/" className="flex items-center gap-2">
+              <span className="text-2xl">🏠</span>
+              <span className="font-bold text-gray-800 dark:text-white">
+                MortgageCalculator<span className="text-blue-500">.quest</span>
+              </span>
+            </a>
+
+            {/* Voice Widget in center */}
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">
+                Talk to me
+              </span>
+              <VoiceWidget variant="inline" size="md" />
+            </div>
+
+            {/* Right side placeholder for future auth */}
+            <div className="w-32" />
+          </div>
+        </div>
+      </nav>
+
       <CopilotSidebar
         instructions={instructions}
         labels={{
@@ -216,9 +242,6 @@ export default function Home() {
           )}
         </main>
       </CopilotSidebar>
-
-      {/* Voice Widget - Outside CopilotSidebar */}
-      <VoiceWidget />
     </div>
   );
 }

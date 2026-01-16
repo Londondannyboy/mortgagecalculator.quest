@@ -3,10 +3,25 @@
 import { VoiceProvider, useVoice, VoiceReadyState } from '@humeai/voice-react';
 import { useState, useEffect, useCallback } from 'react';
 
+interface VoiceWidgetProps {
+  variant?: 'fixed' | 'inline';
+  size?: 'sm' | 'md' | 'lg';
+}
+
 /**
  * Voice Controls - The actual button and UI
  */
-function VoiceControls({ accessToken, configId }: { accessToken: string; configId: string }) {
+function VoiceControls({
+  accessToken,
+  configId,
+  variant = 'fixed',
+  size = 'lg'
+}: {
+  accessToken: string;
+  configId: string;
+  variant?: 'fixed' | 'inline';
+  size?: 'sm' | 'md' | 'lg';
+}) {
   const {
     connect,
     disconnect,
@@ -44,10 +59,23 @@ function VoiceControls({ accessToken, configId }: { accessToken: string; configI
     }
   };
 
+  // Size configurations
+  const sizes = {
+    sm: { button: 'w-10 h-10', icon: 'w-5 h-5', mute: 'w-8 h-8', muteIcon: 'w-4 h-4' },
+    md: { button: 'w-12 h-12', icon: 'w-6 h-6', mute: 'w-9 h-9', muteIcon: 'w-4 h-4' },
+    lg: { button: 'w-16 h-16', icon: 'w-7 h-7', mute: 'w-10 h-10', muteIcon: 'w-5 h-5' },
+  };
+
+  const sizeConfig = sizes[size];
+
+  const wrapperClass = variant === 'fixed'
+    ? 'fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2'
+    : 'flex items-center gap-3';
+
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2">
-      {/* Error indicator */}
-      {error && (
+    <div className={wrapperClass}>
+      {/* Error indicator - only show in fixed mode */}
+      {variant === 'fixed' && error && (
         <div className="bg-red-500 text-white text-xs px-3 py-1 rounded-full shadow-lg max-w-48 truncate">
           {error.message}
         </div>
@@ -55,7 +83,7 @@ function VoiceControls({ accessToken, configId }: { accessToken: string; configI
 
       {/* Status indicator */}
       {isConnected && !error && (
-        <div className="bg-gray-900 text-white text-xs px-3 py-1 rounded-full shadow-lg">
+        <div className={`bg-gray-900 text-white text-xs px-3 py-1 rounded-full shadow-lg ${variant === 'inline' ? 'order-last' : ''}`}>
           {isMuted ? 'Muted' : isPlaying ? 'Speaking...' : 'Listening...'}
         </div>
       )}
@@ -64,13 +92,13 @@ function VoiceControls({ accessToken, configId }: { accessToken: string; configI
       {isConnected && (
         <button
           onClick={() => isMuted ? unmute() : mute()}
-          className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center shadow-md"
+          className={`${sizeConfig.mute} rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center shadow-md`}
           title={isMuted ? 'Unmute' : 'Mute'}
         >
           {isMuted ? (
-            <MicOffIcon className="w-5 h-5 text-red-500" />
+            <MicOffIcon className={`${sizeConfig.muteIcon} text-red-500`} />
           ) : (
-            <MicIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            <MicIcon className={`${sizeConfig.muteIcon} text-gray-600 dark:text-gray-300`} />
           )}
         </button>
       )}
@@ -80,7 +108,7 @@ function VoiceControls({ accessToken, configId }: { accessToken: string; configI
         onClick={handleToggle}
         disabled={isConnecting}
         className={`
-          relative w-16 h-16 rounded-full shadow-xl transition-all duration-300
+          relative ${sizeConfig.button} rounded-full shadow-xl transition-all duration-300
           flex items-center justify-center
           ${isConnected
             ? 'bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700'
@@ -103,18 +131,20 @@ function VoiceControls({ accessToken, configId }: { accessToken: string; configI
 
         {/* Icon */}
         {isConnecting ? (
-          <LoadingIcon className="w-7 h-7 text-white animate-spin" />
+          <LoadingIcon className={`${sizeConfig.icon} text-white animate-spin`} />
         ) : isConnected ? (
-          <PhoneOffIcon className="w-7 h-7 text-white" />
+          <PhoneOffIcon className={`${sizeConfig.icon} text-white`} />
         ) : (
-          <PhoneIcon className="w-7 h-7 text-white" />
+          <PhoneIcon className={`${sizeConfig.icon} text-white`} />
         )}
       </button>
 
-      {/* Label */}
-      <span className="text-xs text-gray-500 dark:text-gray-400">
-        {isConnecting ? 'Connecting...' : isConnected ? 'End call' : 'Voice chat'}
-      </span>
+      {/* Label - only in fixed mode */}
+      {variant === 'fixed' && (
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          {isConnecting ? 'Connecting...' : isConnected ? 'End call' : 'Voice chat'}
+        </span>
+      )}
     </div>
   );
 }
@@ -122,12 +152,20 @@ function VoiceControls({ accessToken, configId }: { accessToken: string; configI
 /**
  * VoiceWidget - Wrapper with VoiceProvider
  */
-export function VoiceWidget() {
+export function VoiceWidget({ variant = 'fixed', size = 'lg' }: VoiceWidgetProps) {
   const [accessToken, setAccessToken] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
   const configId = process.env.NEXT_PUBLIC_HUME_CONFIG_ID || '';
+
+  // Size configurations for loading/error states
+  const sizes = {
+    sm: { button: 'w-10 h-10', icon: 'w-5 h-5' },
+    md: { button: 'w-12 h-12', icon: 'w-6 h-6' },
+    lg: { button: 'w-16 h-16', icon: 'w-6 h-6' },
+  };
+  const sizeConfig = sizes[size];
 
   useEffect(() => {
     async function fetchToken() {
@@ -157,11 +195,13 @@ export function VoiceWidget() {
     }
   }, [configId]);
 
+  const wrapperClass = variant === 'fixed' ? 'fixed bottom-6 right-6 z-50' : '';
+
   if (isLoading) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
-          <LoadingIcon className="w-6 h-6 text-gray-400 animate-spin" />
+      <div className={wrapperClass}>
+        <div className={`${sizeConfig.button} rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center`}>
+          <LoadingIcon className={`${sizeConfig.icon} text-gray-400 animate-spin`} />
         </div>
       </div>
     );
@@ -169,20 +209,21 @@ export function VoiceWidget() {
 
   if (error || !accessToken || !configId) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <div
-          className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center opacity-50 cursor-not-allowed"
-          title={error || 'Voice not configured'}
+      <div className={wrapperClass}>
+        <button
+          className={`${sizeConfig.button} rounded-full bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center shadow-lg hover:from-gray-500 hover:to-gray-600 transition-all cursor-pointer`}
+          title={error || 'Voice not configured - click to retry'}
+          onClick={() => window.location.reload()}
         >
-          <MicOffIcon className="w-6 h-6 text-gray-400" />
-        </div>
+          <MicOffIcon className={`${sizeConfig.icon} text-white`} />
+        </button>
       </div>
     );
   }
 
   return (
     <VoiceProvider>
-      <VoiceControls accessToken={accessToken} configId={configId} />
+      <VoiceControls accessToken={accessToken} configId={configId} variant={variant} size={size} />
     </VoiceProvider>
   );
 }
