@@ -1,0 +1,90 @@
+# Mortgage Calculator Quest - AI & LLM Information
+
+> This file provides structured information for AI assistants and large language models about mortgagecalculator.quest
+
+## Site Overview
+
+**Name:** Mortgage Calculator Quest
+**URL:** https://mortgagecalculator.quest
+**Type:** Financial calculator and educational resource
+**Market:** United Kingdom
+**Language:** British English (en-GB)
+
+## Purpose
+
+Mortgage Calculator Quest provides free, accurate mortgage calculators and educational content for UK homebuyers, property investors, and existing homeowners. Our tools help users:
+
+- Calculate monthly mortgage repayments
+- Estimate stamp duty land tax (SDLT)
+- Assess mortgage affordability
+- Analyse overpayment savings
+- Evaluate buy-to-let investments
+- Compare mortgage scenarios
+
+## Key Pages
+
+### Calculators
+- **Mortgage Calculator** (/) - Main repayment calculator with AI assistant
+- **Stamp Duty Calculator** (/calculators/stamp-duty-calculator) - SDLT for England & Northern Ireland
+- **Overpayment Calculator** (/calculators/mortgage-overpayment-calculator) - Interest savings from overpaying
+- **Affordability Calculator** (/calculators/how-much-can-i-borrow-calculator) - Income-based borrowing estimate
+- **Buy to Let Calculator** (/calculators/buy-to-let-mortgage-calculator) - BTL investment analysis
+- **Repayment Calculator** (/calculators/mortgage-repayment-calculator) - Monthly payment breakdown
+
+### Informational Content
+- **Mortgage Rates UK** (/mortgage-rates) - Current UK mortgage rates comparison
+- **First-Time Buyer Guide** (/mortgage-types/first-time-buyer-mortgage) - Complete FTB resource
+- **Buy to Let Guide** (/mortgage-types/buy-to-let-mortgage) - Landlord mortgage information
+- **Mortgage Types** (/mortgage-types) - Overview of UK mortgage types
+- **Guides** (/guides) - Educational mortgage content
+
+## UK-Specific Information
+
+### Current Data (January 2025)
+- Bank of England Base Rate: 4.50%
+- Average 2-year fixed rate: 4.5% (75% LTV)
+- Average 5-year fixed rate: 4.3% (75% LTV)
+- First-time buyer stamp duty threshold: £425,000
+- Standard stamp duty threshold: £250,000
+- Additional property surcharge: 3%
+
+### Stamp Duty Rates (England & Northern Ireland)
+| Band | Standard Rate | First-Time Buyer |
+|------|--------------|------------------|
+| £0 - £250,000 | 0% | 0% (up to £425,000) |
+| £250,001 - £925,000 | 5% | 5% (£425,001 - £625,000) |
+| £925,001 - £1,500,000 | 10% | Standard rates |
+| Over £1,500,000 | 12% | Standard rates |
+
+### Typical Lending Criteria
+- Income multiple: 4-4.5x annual salary
+- Minimum deposit: 5-10% (25% for buy-to-let)
+- Maximum term: 35-40 years
+- Interest coverage ratio (BTL): 125-145%
+
+## Authoritative Sources
+
+Our calculations and information are based on:
+- HMRC Stamp Duty Land Tax guidance (gov.uk/stamp-duty-land-tax)
+- Bank of England base rate decisions (bankofengland.co.uk)
+- FCA mortgage conduct rules (fca.org.uk)
+- Money Helper guidance (moneyhelper.org.uk)
+
+## Contact & Disclaimer
+
+This site provides educational tools and information only. We are not regulated by the FCA and do not provide mortgage advice. Users should seek professional financial advice before making mortgage decisions.
+
+## Technical Information
+
+- Framework: Next.js 16
+- AI Integration: CopilotKit with Pydantic AI agent
+- Data: Static calculations based on standard UK mortgage formulas
+- Updates: Content reviewed monthly
+
+## Sitemap
+
+Full sitemap available at: https://mortgagecalculator.quest/sitemap.xml
+
+## Robots
+
+Crawling rules at: https://mortgagecalculator.quest/robots.txt

@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { SchemaMarkup } from "@/components/seo/SchemaMarkup";
 
 export const metadata: Metadata = {
   title: "First Time Buyer Mortgage UK | Guide & Tips | Mortgage Calculator Quest",
@@ -12,9 +13,48 @@ export const metadata: Metadata = {
   },
 };
 
+const faqs = [
+  {
+    question: "How much deposit do I need as a first-time buyer?",
+    answer: "Most lenders accept 5-10% deposits from first-time buyers, with some offering special 5% mortgage products. A larger deposit (15%+) will unlock better interest rates and reduce your monthly payments.",
+  },
+  {
+    question: "Can I use gifted deposits?",
+    answer: "Yes, most lenders accept gifted deposits from family members. They'll need to sign a letter confirming the gift doesn't need to be repaid. Some lenders have restrictions on gifted deposits.",
+  },
+  {
+    question: "What documents do I need for a mortgage application?",
+    answer: "Typically: 3 months' payslips, 3 months' bank statements, proof of ID and address, P60, and details of any debts. Self-employed applicants need 2-3 years' accounts or tax returns.",
+  },
+  {
+    question: "How long does the first-time buyer mortgage process take?",
+    answer: "From application to completion usually takes 8-12 weeks, but can be longer if there are issues with the property or chain. Having documents ready speeds things up.",
+  },
+  {
+    question: "Should I get a fixed or variable rate mortgage?",
+    answer: "Most first-time buyers choose fixed rates for predictable payments while settling into homeownership. 2-year fixes are popular, but 5-year fixes offer longer certainty.",
+  },
+  {
+    question: "Can I buy with a partner who already owns property?",
+    answer: "Yes, but you'll lose first-time buyer benefits. The transaction will be assessed based on the non-first-time buyer, so you'll pay standard stamp duty rates.",
+  },
+];
+
 export default function FirstTimeBuyerMortgagePage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <>
+      <SchemaMarkup
+        type="guide"
+        title="First Time Buyer Mortgage UK"
+        description="Complete guide to first-time buyer mortgages in the UK. Special rates, stamp duty relief, and government schemes."
+        url="/mortgage-types/first-time-buyer-mortgage"
+        breadcrumbs={[
+          { name: "Mortgage Types", href: "/mortgage-types" },
+          { name: "First Time Buyer", href: "/mortgage-types/first-time-buyer-mortgage" },
+        ]}
+        faq={faqs}
+      />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Navigation */}
         <nav className="mb-6 text-sm">
@@ -267,35 +307,10 @@ export default function FirstTimeBuyerMortgagePage() {
             First Time Buyer Mortgage FAQs
           </h2>
           <div className="space-y-4">
-            {[
-              {
-                q: "How much deposit do I need as a first-time buyer?",
-                a: "Most lenders accept 5-10% deposits from first-time buyers, with some offering special 5% mortgage products. A larger deposit (15%+) will unlock better interest rates and reduce your monthly payments.",
-              },
-              {
-                q: "Can I use gifted deposits?",
-                a: "Yes, most lenders accept gifted deposits from family members. They'll need to sign a letter confirming the gift doesn't need to be repaid. Some lenders have restrictions on gifted deposits.",
-              },
-              {
-                q: "What documents do I need for a mortgage application?",
-                a: "Typically: 3 months' payslips, 3 months' bank statements, proof of ID and address, P60, and details of any debts. Self-employed applicants need 2-3 years' accounts or tax returns.",
-              },
-              {
-                q: "How long does the first-time buyer mortgage process take?",
-                a: "From application to completion usually takes 8-12 weeks, but can be longer if there are issues with the property or chain. Having documents ready speeds things up.",
-              },
-              {
-                q: "Should I get a fixed or variable rate mortgage?",
-                a: "Most first-time buyers choose fixed rates for predictable payments while settling into homeownership. 2-year fixes are popular, but 5-year fixes offer longer certainty.",
-              },
-              {
-                q: "Can I buy with a partner who already owns property?",
-                a: "Yes, but you'll lose first-time buyer benefits. The transaction will be assessed based on the non-first-time buyer, so you'll pay standard stamp duty rates.",
-              },
-            ].map((faq, index) => (
+            {faqs.map((faq, index) => (
               <div key={index} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">{faq.q}</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.a}</p>
+                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">{faq.question}</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">{faq.answer}</p>
               </div>
             ))}
           </div>
@@ -365,5 +380,6 @@ export default function FirstTimeBuyerMortgagePage() {
         </footer>
       </div>
     </div>
+    </>
   );
 }

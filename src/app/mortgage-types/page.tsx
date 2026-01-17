@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { SchemaMarkup } from "@/components/seo/SchemaMarkup";
 
 export const metadata: Metadata = {
   title: "Mortgage Types UK | Complete Guide | Mortgage Calculator Quest",
@@ -23,9 +24,9 @@ const mortgageTypes = [
     icon: "🏢",
   },
   {
-    title: "Remortgage",
-    href: "/mortgage-types/remortgage",
-    description: "Switching your existing mortgage to a new deal, either with your current lender or a new one.",
+    title: "Remortgage Calculator",
+    href: "/calculators/remortgage-calculator",
+    description: "Calculate if switching your mortgage to a new deal could save you money. Compare costs and savings.",
     searchVolume: "27,100",
     icon: "🔄",
   },
@@ -54,7 +55,17 @@ const mortgageTypes = [
 
 export default function MortgageTypesPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <>
+      <SchemaMarkup
+        type="webpage"
+        title="Mortgage Types UK"
+        description="Understand different UK mortgage types including first-time buyer, buy to let, fixed rate, and tracker mortgages."
+        url="/mortgage-types"
+        breadcrumbs={[
+          { name: "Mortgage Types", href: "/mortgage-types" },
+        ]}
+      />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Navigation */}
         <nav className="mb-6 text-sm">
@@ -189,5 +200,6 @@ export default function MortgageTypesPage() {
         </footer>
       </div>
     </div>
+    </>
   );
 }
