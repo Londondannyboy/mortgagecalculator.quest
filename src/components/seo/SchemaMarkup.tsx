@@ -22,7 +22,7 @@ export function SchemaMarkup({
   description,
   url,
   breadcrumbs = [],
-  datePublished = '2025-01-01',
+  datePublished = '2026-01-01',
   dateModified = new Date().toISOString().split('T')[0],
   faq = [],
 }: SchemaMarkupProps) {

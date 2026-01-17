@@ -370,7 +370,7 @@ export default function FirstTimeBuyerMortgagePage() {
         {/* Footer */}
         <footer className="pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-            <em>Last updated: January 2025</em>
+            <em>Last updated: January 2026</em>
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
             Your home may be repossessed if you do not keep up repayments on your mortgage.

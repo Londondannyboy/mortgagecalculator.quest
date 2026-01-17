@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="prose dark:prose-invert max-w-none">
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            <strong>Last updated:</strong> January 2025
+            <strong>Last updated:</strong> January 2026
           </p>
 
           <section className="mb-8">

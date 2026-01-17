@@ -4,11 +4,11 @@ import { RemortgageCalculator } from "@/components/calculators/RemortgageCalcula
 import { SchemaMarkup, ExternalLink, authoritativeLinks } from "@/components/seo/SchemaMarkup";
 
 export const metadata: Metadata = {
-  title: "Remortgage Calculator UK 2025 | Compare & Save | Mortgage Calculator Quest",
+  title: "Remortgage Calculator UK 2026 | Compare & Save | Mortgage Calculator Quest",
   description: "Free remortgage calculator for UK homeowners. Compare your current deal with new rates, calculate savings after fees, and find the break-even point. See if switching is worth it.",
   keywords: "remortgage calculator, remortgage savings calculator, should I remortgage, remortgage comparison, switch mortgage calculator",
   openGraph: {
-    title: "Remortgage Calculator UK 2025 | See How Much You Could Save",
+    title: "Remortgage Calculator UK 2026 | See How Much You Could Save",
     description: "Calculate your potential savings from remortgaging. Compare rates, factor in fees, and find out if switching makes financial sense.",
     type: "website",
   },
@@ -434,7 +434,7 @@ export default function RemortgageCalculatorPage() {
           {/* Footer */}
           <footer className="pt-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              <em>Last updated: January 2025</em>
+              <em>Last updated: January 2026</em>
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Your home may be repossessed if you do not keep up repayments on your mortgage.

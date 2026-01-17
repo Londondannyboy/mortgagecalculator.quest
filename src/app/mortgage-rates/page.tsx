@@ -2,12 +2,12 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Mortgage Rates UK 2025 | Compare Best Rates | Mortgage Calculator Quest",
-  description: "Compare UK mortgage rates for 2025. Find the best fixed, variable, and tracker rates. Current rates, market trends, and tips for getting the best deal.",
-  keywords: "mortgage rates UK, best mortgage rates, current mortgage rates, fixed rate mortgage, mortgage interest rates 2025",
+  title: "Mortgage Rates UK 2026 | Compare Best Rates | Mortgage Calculator Quest",
+  description: "Compare UK mortgage rates for 2026. Find the best fixed, variable, and tracker rates. Current rates, market trends, and tips for getting the best deal.",
+  keywords: "mortgage rates UK, best mortgage rates, current mortgage rates, fixed rate mortgage, mortgage interest rates 2026",
   openGraph: {
-    title: "Mortgage Rates UK 2025 | Compare Current Rates",
-    description: "Compare UK mortgage rates for 2025. Fixed rates, trackers, and variable rates from leading lenders.",
+    title: "Mortgage Rates UK 2026 | Compare Current Rates",
+    description: "Compare indicative UK mortgage rates for 2026. Fixed rates, trackers, and variable rates. Always verify with lenders.",
     type: "website",
   },
 };
@@ -41,10 +41,10 @@ export default function MortgageRatesPage() {
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-            Mortgage Rates UK 2025 - Compare Current Rates
+            Mortgage Rates UK 2026 - Compare Current Rates
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            <strong>Mortgage rates UK</strong> have stabilised in early 2025 following the Bank of England&apos;s
+            <strong>Mortgage rates UK</strong> have stabilised in early 2026 following the Bank of England&apos;s
             recent base rate decisions. Whether you&apos;re buying your first home, remortgaging, or investing in
             property, understanding current rates helps you find the best deal. Use our{" "}
             <Link href="/" className="text-blue-600 hover:underline">mortgage calculator</Link> to see how
@@ -103,7 +103,7 @@ export default function MortgageRatesPage() {
             </table>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-            Rates shown are representative and based on market data as of January 2025.
+            Rates shown are representative and based on market data as of January 2026.
             Actual rates depend on individual circumstances and lender criteria.
           </p>
         </section>
@@ -116,7 +116,7 @@ export default function MortgageRatesPage() {
           <div className="flex items-center gap-4">
             <div className="text-4xl font-bold text-blue-600">4.50%</div>
             <div className="text-sm text-blue-700 dark:text-blue-300">
-              <p>Current base rate as of January 2025</p>
+              <p>Current base rate as of January 2026</p>
               <p>This influences all UK mortgage rates</p>
             </div>
           </div>
@@ -231,8 +231,8 @@ export default function MortgageRatesPage() {
           <div className="space-y-4">
             {[
               {
-                q: "Will mortgage rates go down in 2025?",
-                a: "Market expectations suggest modest rate reductions through 2025 as inflation stabilises. However, predictions are uncertain - the Bank of England's decisions depend on economic conditions. Fixed rates may fall gradually if base rate cuts materialise.",
+                q: "Will mortgage rates go down in 2026?",
+                a: "Rate predictions are uncertain and depend on economic conditions. Check the Bank of England website for the latest base rate decisions and Money Helper for guidance. We cannot predict future rates - always do your own research.",
               },
               {
                 q: "Should I fix for 2 or 5 years?",
@@ -240,7 +240,7 @@ export default function MortgageRatesPage() {
               },
               {
                 q: "What's the best mortgage rate available?",
-                a: "The best rates are typically available to those with 40%+ deposits and excellent credit. At 60% LTV, leading rates are around 4.09-4.19% for 5-year fixes. Use our calculator to see how different rates affect your payments.",
+                a: "Rates vary by lender, deposit size, and credit history. The rates shown on this page are illustrative examples only. Always compare rates directly from multiple lenders or use a mortgage broker. We have no commercial relationships with any lenders.",
               },
               {
                 q: "How do I compare mortgage rates fairly?",
@@ -297,7 +297,7 @@ export default function MortgageRatesPage() {
           <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-3">Summary</h2>
           <p className="text-gray-600 dark:text-gray-300">
             <strong>Mortgage rates UK</strong> vary significantly based on your deposit size, credit score, and
-            the type of deal you choose. With rates stabilising in 2025, now is a good time to shop around
+            the type of deal you choose. With rates stabilising in 2026, now is a good time to shop around
             and compare offers. Use our{" "}
             <Link href="/" className="text-blue-600 hover:underline">mortgage calculator</Link> to see how
             different rates affect your monthly payments, and consider speaking to a broker to access the
@@ -308,7 +308,7 @@ export default function MortgageRatesPage() {
         {/* Footer Disclaimer */}
         <footer className="pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-            <em>Last updated: January 2025</em>
+            <em>Last updated: January 2026</em>
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
             Your home may be repossessed if you do not keep up repayments on your mortgage.

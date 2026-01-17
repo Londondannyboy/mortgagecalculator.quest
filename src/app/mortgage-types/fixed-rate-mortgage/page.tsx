@@ -3,11 +3,11 @@ import Link from "next/link";
 import { SchemaMarkup, ExternalLink, authoritativeLinks } from "@/components/seo/SchemaMarkup";
 
 export const metadata: Metadata = {
-  title: "Fixed Rate Mortgage UK 2025 | Rates & Guide | Mortgage Calculator Quest",
+  title: "Fixed Rate Mortgage UK 2026 | Rates & Guide | Mortgage Calculator Quest",
   description: "Complete guide to fixed rate mortgages in the UK. Compare 2-year and 5-year fixes, understand the pros and cons, and find out if fixing your mortgage rate is right for you.",
   keywords: "fixed rate mortgage, fixed mortgage, 2 year fixed, 5 year fixed, fixed rate mortgage UK",
   openGraph: {
-    title: "Fixed Rate Mortgage UK 2025 | Complete Guide",
+    title: "Fixed Rate Mortgage UK 2026 | Complete Guide",
     description: "Everything you need to know about fixed rate mortgages. Compare deals, understand early repayment charges, and decide if fixing is right for you.",
     type: "website",
   },
@@ -214,7 +214,7 @@ export default function FixedRateMortgagePage() {
 
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg my-6">
                 <h3 className="font-semibold text-gray-800 dark:text-white mb-4">
-                  Indicative Fixed Rates (January 2025)
+                  Indicative Fixed Rates (January 2026)
                 </h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -313,7 +313,7 @@ export default function FixedRateMortgagePage() {
                   Current Market Observation
                 </h3>
                 <p className="text-amber-700 dark:text-amber-300">
-                  In early 2025, 5-year fixed rates are often cheaper than 2-year rates. This &quot;inverted&quot;
+                  In early 2026, 5-year fixed rates are often cheaper than 2-year rates. This &quot;inverted&quot;
                   pricing reflects market expectations that interest rates will fall over the next few
                   years. When markets expect falling rates, longer fixes are priced more competitively.
                 </p>
@@ -531,7 +531,7 @@ export default function FixedRateMortgagePage() {
           {/* Footer */}
           <footer className="pt-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              <em>Last updated: January 2025</em>
+              <em>Last updated: January 2026</em>
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Your home may be repossessed if you do not keep up repayments on your mortgage.

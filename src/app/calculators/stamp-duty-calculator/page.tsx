@@ -4,11 +4,11 @@ import { StampDutyCalculator } from "@/components/calculators/StampDutyCalculato
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Stamp Duty Calculator UK 2025 | Calculate SDLT | Mortgage Calculator Quest",
-  description: "Free UK stamp duty calculator for 2025. Calculate SDLT on your property purchase instantly. First-time buyer relief, additional property rates, and full breakdown included.",
+  title: "Stamp Duty Calculator UK 2026 | Calculate SDLT | Mortgage Calculator Quest",
+  description: "Free UK stamp duty calculator for 2026. Calculate SDLT on your property purchase instantly. First-time buyer relief, additional property rates, and full breakdown included.",
   keywords: "stamp duty calculator, SDLT calculator, stamp duty UK, stamp duty land tax, first time buyer stamp duty",
   openGraph: {
-    title: "Stamp Duty Calculator UK 2025 | Calculate SDLT",
+    title: "Stamp Duty Calculator UK 2026 | Calculate SDLT",
     description: "Calculate your UK stamp duty instantly. First-time buyer relief, additional property surcharges, and complete band breakdown.",
     type: "website",
   },
@@ -117,7 +117,7 @@ export default function StampDutyCalculatorPage() {
             According to{" "}
             <a href="https://www.gov.uk/stamp-duty-land-tax/residential-property-rates" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
               official HMRC guidance
-            </a>, the current rates came into effect from April 2025, with the nil-rate band set at £250,000
+            </a>, the current rates came into effect from April 2026, with the nil-rate band set at £250,000
             for standard buyers and £425,000 for first-time buyers purchasing properties up to £625,000.
           </p>
           <div className="overflow-x-auto">

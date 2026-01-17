@@ -55,13 +55,13 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Content */}
           <div className="space-y-8">
-            {/* Trust badge */}
+            {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm">
               <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
               </span>
-              <span>Trusted by 50,000+ UK homebuyers</span>
+              <span>Beta - Independent Educational Site</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
@@ -93,12 +93,12 @@ export function HeroSection() {
               </Link>
             </div>
 
-            {/* Quick stats */}
+            {/* Quick features */}
             <div className="flex flex-wrap gap-8 pt-4">
               {[
-                { value: '368K+', label: 'Monthly searches' },
                 { value: '6', label: 'Free calculators' },
-                { value: '24/7', label: 'AI assistance' },
+                { value: '100%', label: 'Free to use' },
+                { value: '0', label: 'Commercial partnerships' },
               ].map((stat) => (
                 <div key={stat.label}>
                   <div className="text-2xl font-bold text-white">{stat.value}</div>

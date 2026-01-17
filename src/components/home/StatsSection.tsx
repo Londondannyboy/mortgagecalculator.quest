@@ -1,142 +1,62 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
-
-const stats = [
-  {
-    value: 600000,
-    suffix: '+',
-    label: 'Annual searches',
-    description: 'People searching for our calculators',
-    icon: '🔍',
-  },
-  {
-    value: 50000,
-    suffix: '+',
-    label: 'Calculations',
-    description: 'Mortgage calculations performed',
-    icon: '🧮',
-  },
-  {
-    value: 99,
-    suffix: '%',
-    label: 'Accuracy',
-    description: 'Based on HMRC & lender criteria',
-    icon: '✓',
-  },
-  {
-    value: 4.5,
-    suffix: '',
-    prefix: '£',
-    label: 'Avg base rate',
-    description: 'Bank of England rate',
-    icon: '📈',
-  },
-]
-
-function AnimatedCounter({
-  value,
-  prefix = '',
-  suffix = '',
-  duration = 2000,
-}: {
-  value: number
-  prefix?: string
-  suffix?: string
-  duration?: number
-}) {
-  const [count, setCount] = useState(0)
-  const [hasAnimated, setHasAnimated] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated) {
-          setHasAnimated(true)
-
-          const steps = 60
-          const stepDuration = duration / steps
-          const increment = value / steps
-
-          let currentStep = 0
-          const timer = setInterval(() => {
-            currentStep++
-            setCount(Math.min(value, increment * currentStep))
-            if (currentStep >= steps) {
-              clearInterval(timer)
-              setCount(value)
-            }
-          }, stepDuration)
-        }
-      },
-      { threshold: 0.5 }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => observer.disconnect()
-  }, [value, duration, hasAnimated])
-
-  const displayValue = value % 1 === 0 ? Math.round(count).toLocaleString() : count.toFixed(1)
-
-  return (
-    <div ref={ref} className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-      {prefix}{displayValue}{suffix}
-    </div>
-  )
-}
-
 export function StatsSection() {
   return (
-    <section className="py-20 bg-white dark:bg-gray-800">
+    <section className="py-16 bg-white dark:bg-gray-800">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-16">
+        {/* What We Offer */}
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Trusted by UK Homebuyers
+            Free Educational Mortgage Tools
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Our calculators are used by thousands of people every month to make
-            informed decisions about their mortgages.
+            We provide free calculators to help you understand mortgage costs.
+            We are an independent educational site with no commercial partnerships.
           </p>
         </div>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="relative group"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-
-              <div className="relative text-center p-6 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
-                <span className="text-3xl mb-4 block">{stat.icon}</span>
-                <AnimatedCounter
-                  value={stat.value}
-                  prefix={stat.prefix}
-                  suffix={stat.suffix}
-                />
-                <div className="text-lg font-semibold text-gray-700 dark:text-gray-200 mt-2">
-                  {stat.label}
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {stat.description}
-                </div>
-              </div>
+        {/* Features grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="text-center p-6 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <span className="text-3xl mb-4 block">🧮</span>
+            <div className="text-lg font-semibold text-gray-700 dark:text-gray-200 mt-2">
+              Free Calculators
             </div>
-          ))}
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Mortgage, stamp duty, affordability and overpayment calculators
+            </div>
+          </div>
+
+          <div className="text-center p-6 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <span className="text-3xl mb-4 block">📚</span>
+            <div className="text-lg font-semibold text-gray-700 dark:text-gray-200 mt-2">
+              Educational Content
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Guides to help you understand UK mortgages and property buying
+            </div>
+          </div>
+
+          <div className="text-center p-6 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <span className="text-3xl mb-4 block">🔗</span>
+            <div className="text-lg font-semibold text-gray-700 dark:text-gray-200 mt-2">
+              Official Source Links
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              We link to official sources so you can verify information
+            </div>
+          </div>
         </div>
 
-        {/* Trust badges */}
-        <div className="mt-16 pt-16 border-t border-gray-200 dark:border-gray-700">
+        {/* Official Sources - NOT Partners */}
+        <div className="pt-12 border-t border-gray-200 dark:border-gray-700">
           <div className="text-center mb-8">
             <span className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Official Sources & Partners
+              Official UK Government Sources
             </span>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+              We recommend verifying all information with these official sources. We have no affiliation with these organisations.
+            </p>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
             <a

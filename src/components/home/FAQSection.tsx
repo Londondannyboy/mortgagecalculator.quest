@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     question: 'What is the current Bank of England base rate?',
-    answer: 'As of January 2025, the Bank of England base rate is 4.50%. This rate influences all UK mortgage rates, with fixed rates typically priced based on future rate expectations and tracker mortgages directly following the base rate plus a margin.',
+    answer: 'As of January 2026, the Bank of England base rate is 4.50%. This rate influences all UK mortgage rates, with fixed rates typically priced based on future rate expectations and tracker mortgages directly following the base rate plus a margin.',
   },
   {
     question: 'How much can I borrow for a mortgage?',

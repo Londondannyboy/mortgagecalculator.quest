@@ -107,62 +107,89 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            {/* Disclaimer */}
-            <div className="text-xs text-gray-500 max-w-2xl">
-              <p className="mb-2">
-                <strong>Important:</strong> Your home may be repossessed if you do not keep up
-                repayments on your mortgage. Mortgage Calculator Quest provides tools and information
-                for educational purposes only. Always seek professional financial advice before making
-                mortgage decisions.
+          {/* Strong Disclaimer Box */}
+          <div className="bg-gray-800 rounded-lg p-4 mb-6">
+            <h4 className="text-sm font-semibold text-amber-400 mb-2">Important Disclaimer</h4>
+            <div className="text-xs text-gray-400 space-y-2">
+              <p>
+                <strong className="text-gray-300">Independent Educational Site:</strong> Mortgage Calculator Quest
+                is an independent educational website. We have <strong className="text-amber-400">no commercial
+                partnerships, affiliations, or business relationships</strong> with any lenders, banks, financial
+                institutions, or government bodies. Links to official sources (HMRC, Bank of England, etc.) are
+                provided for your convenience only.
               </p>
               <p>
-                Mortgage Calculator Quest is not authorised or regulated by the Financial Conduct Authority.
-                We do not provide mortgage advice or recommend specific lenders or products.
+                <strong className="text-gray-300">Not Financial Advice:</strong> The calculators, rates, and
+                information on this site are for <strong>educational purposes only</strong> and do not constitute
+                financial advice. All figures are estimates and may not reflect actual mortgage offers.
+              </p>
+              <p>
+                <strong className="text-gray-300">Do Your Own Research:</strong> Always verify information with
+                official sources such as <a href="https://www.gov.uk/stamp-duty-land-tax" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">HMRC</a>,{' '}
+                <a href="https://www.moneyhelper.org.uk" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Money Helper</a>, and{' '}
+                <a href="https://www.bankofengland.co.uk" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Bank of England</a>.
+                Consult a qualified, FCA-regulated mortgage adviser before making any financial decisions.
+              </p>
+              <p>
+                <strong className="text-gray-300">Your Home at Risk:</strong> Your home may be repossessed if you
+                do not keep up repayments on your mortgage.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* Regulatory Status */}
+            <div className="text-xs text-gray-500">
+              <p>
+                Mortgage Calculator Quest is <strong>not authorised or regulated</strong> by the Financial Conduct
+                Authority. We do not provide mortgage advice or recommend specific lenders or products.
               </p>
             </div>
 
             {/* Copyright */}
             <div className="text-xs text-gray-500 flex-shrink-0">
               <p>© {currentYear} MortgageCalculator.quest</p>
-              <p className="mt-1">All rights reserved.</p>
+              <p className="mt-1">Independent educational site.</p>
             </div>
           </div>
 
-          {/* Regulatory Links */}
-          <div className="mt-4 pt-4 border-t border-gray-800 flex flex-wrap gap-4 text-xs text-gray-500">
-            <a
-              href="https://www.fca.org.uk/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-400"
-            >
-              FCA
-            </a>
-            <a
-              href="https://www.gov.uk/government/organisations/hm-revenue-customs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-400"
-            >
-              HMRC
-            </a>
-            <a
-              href="https://www.moneyhelper.org.uk/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-400"
-            >
-              Money Helper
-            </a>
-            <a
-              href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-400"
-            >
-              Bank of England Base Rate
-            </a>
+          {/* Official Sources - NOT affiliates */}
+          <div className="mt-4 pt-4 border-t border-gray-800">
+            <p className="text-xs text-gray-600 mb-2">Official sources (we are not affiliated with these organisations):</p>
+            <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+              <a
+                href="https://www.fca.org.uk/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-400"
+              >
+                FCA
+              </a>
+              <a
+                href="https://www.gov.uk/government/organisations/hm-revenue-customs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-400"
+              >
+                HMRC
+              </a>
+              <a
+                href="https://www.moneyhelper.org.uk/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-400"
+              >
+                Money Helper
+              </a>
+              <a
+                href="https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-400"
+              >
+                Bank of England
+              </a>
+            </div>
           </div>
         </div>
       </div>

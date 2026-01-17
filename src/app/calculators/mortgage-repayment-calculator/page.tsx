@@ -115,7 +115,7 @@ export default function MortgageRepaymentCalculatorPage() {
         <div className="space-y-4">
           <p>
             UK mortgage repayments vary significantly based on the interest rate environment. With rates
-            stabilising in 2025, borrowers are seeing more predictable payment calculations.
+            stabilising in 2026, borrowers are seeing more predictable payment calculations.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">

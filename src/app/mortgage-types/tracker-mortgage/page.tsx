@@ -3,11 +3,11 @@ import Link from "next/link";
 import { SchemaMarkup, ExternalLink, authoritativeLinks } from "@/components/seo/SchemaMarkup";
 
 export const metadata: Metadata = {
-  title: "Tracker Mortgage UK 2025 | Rates & Guide | Mortgage Calculator Quest",
+  title: "Tracker Mortgage UK 2026 | Rates & Guide | Mortgage Calculator Quest",
   description: "Complete guide to tracker mortgages in the UK. Understand how they follow the Bank of England base rate, compare with fixed rates, and learn the pros and cons.",
   keywords: "tracker mortgage, tracker rate mortgage, base rate tracker, variable rate mortgage, tracker vs fixed",
   openGraph: {
-    title: "Tracker Mortgage UK 2025 | Complete Guide",
+    title: "Tracker Mortgage UK 2026 | Complete Guide",
     description: "Everything you need to know about tracker mortgages. How they follow the base rate, when they're beneficial, and the risks involved.",
     type: "website",
   },
@@ -232,7 +232,7 @@ export default function TrackerMortgagePage() {
 
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg my-6">
                 <h3 className="font-semibold text-gray-800 dark:text-white mb-4">
-                  Indicative Tracker Rates (January 2025)
+                  Indicative Tracker Rates (January 2026)
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   Current base rate: <strong>4.50%</strong>
@@ -338,7 +338,7 @@ export default function TrackerMortgagePage() {
                   Current Market Context
                 </h3>
                 <p className="text-purple-700 dark:text-purple-300">
-                  In early 2025, tracker rates are typically higher than fixed rates because markets
+                  In early 2026, tracker rates are typically higher than fixed rates because markets
                   expect the base rate to fall. Trackers may become more attractive if and when rates
                   decrease, as you&apos;d benefit from the reductions. However, you&apos;re taking on uncertainty
                   that fixed rate holders avoid.
@@ -564,7 +564,7 @@ export default function TrackerMortgagePage() {
           {/* Footer */}
           <footer className="pt-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              <em>Last updated: January 2025</em>
+              <em>Last updated: January 2026</em>
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Your home may be repossessed if you do not keep up repayments on your mortgage.

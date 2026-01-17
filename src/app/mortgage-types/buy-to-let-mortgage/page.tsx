@@ -3,11 +3,11 @@ import Link from "next/link";
 import { SchemaMarkup, ExternalLink, authoritativeLinks } from "@/components/seo/SchemaMarkup";
 
 export const metadata: Metadata = {
-  title: "Buy to Let Mortgage UK 2025 | Complete Landlord Guide | Mortgage Calculator Quest",
+  title: "Buy to Let Mortgage UK 2026 | Complete Landlord Guide | Mortgage Calculator Quest",
   description: "Complete guide to buy to let mortgages in the UK. Learn about BTL rates, deposit requirements, rental income calculations, tax implications, and landlord responsibilities.",
   keywords: "buy to let mortgage, btl mortgage, landlord mortgage, rental property mortgage, investment property mortgage UK",
   openGraph: {
-    title: "Buy to Let Mortgage UK 2025 | Complete Landlord Guide",
+    title: "Buy to Let Mortgage UK 2026 | Complete Landlord Guide",
     description: "Everything landlords need to know about buy to let mortgages. Rates, deposits, rental calculations, and tax advice.",
     type: "website",
   },
@@ -279,7 +279,7 @@ export default function BuyToLetMortgagePage() {
 
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg my-6">
                 <h3 className="font-semibold text-gray-800 dark:text-white mb-4">
-                  Indicative BTL Rates (January 2025)
+                  Indicative BTL Rates (January 2026)
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
@@ -695,7 +695,7 @@ export default function BuyToLetMortgagePage() {
           {/* Footer */}
           <footer className="pt-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              <em>Last updated: January 2025</em>
+              <em>Last updated: January 2026</em>
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Your property may be repossessed if you do not keep up repayments on your mortgage.
