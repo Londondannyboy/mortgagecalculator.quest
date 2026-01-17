@@ -61,9 +61,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority,
   }))
 
+  // Legal pages
+  const legalPages = [
+    '/privacy-policy',
+    '/terms-of-service',
+    '/data-policy',
+  ].map((path) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: currentDate,
+    changeFrequency: 'monthly' as const,
+    priority: 0.3,
+  }))
+
   return [
     ...corePages,
     ...calculatorPages,
     ...mortgageTypePages,
+    ...legalPages,
   ]
 }

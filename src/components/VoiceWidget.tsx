@@ -178,16 +178,30 @@ IMPORTANT RULES:
   );
 }
 
+const GUEST_SESSION_LIMIT = 2;
+const SESSION_STORAGE_KEY = 'voice-sessions-count';
+
 /**
  * VoiceWidget - Main export
  * Pattern matches relocation.quest VoiceChatProvider:
  * 1. Fetch token on mount
  * 2. Only render VoiceProvider once token is available
  * 3. Pass token as prop to inner component
+ * 4. Limit guest users to 2 sessions
  */
 export function VoiceWidget({ variant = 'fixed', size = 'lg', user }: VoiceWidgetProps) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sessionCount, setSessionCount] = useState(0);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // Check session count for guests
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !user?.id) {
+      const count = parseInt(localStorage.getItem(SESSION_STORAGE_KEY) || '0', 10);
+      setSessionCount(count);
+    }
+  }, [user]);
 
   // Fetch token on mount (NOT on click)
   useEffect(() => {
@@ -208,6 +222,15 @@ export function VoiceWidget({ variant = 'fixed', size = 'lg', user }: VoiceWidge
         setError(err.message);
       });
   }, []);
+
+  // Track session start for guests
+  const onSessionStart = useCallback(() => {
+    if (!user?.id && typeof window !== 'undefined') {
+      const newCount = sessionCount + 1;
+      localStorage.setItem(SESSION_STORAGE_KEY, newCount.toString());
+      setSessionCount(newCount);
+    }
+  }, [sessionCount, user]);
 
   const wrapperClass = variant === 'fixed'
     ? 'fixed bottom-6 right-6 z-50 flex flex-col items-center gap-2'
@@ -237,18 +260,66 @@ export function VoiceWidget({ variant = 'fixed', size = 'lg', user }: VoiceWidge
     );
   }
 
+  // Check if guest has exceeded session limit
+  const isGuest = !user?.id;
+  const hasExceededLimit = isGuest && sessionCount >= GUEST_SESSION_LIMIT;
+
+  // Show login prompt overlay
+  if (showLoginPrompt || hasExceededLimit) {
+    return (
+      <div className={wrapperClass}>
+        <div className="relative">
+          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+            <MicIcon className="w-5 h-5 text-gray-400" />
+          </div>
+          {/* Login prompt tooltip */}
+          <div className="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 p-3 text-xs">
+            <p className="text-gray-700 mb-2">
+              {hasExceededLimit
+                ? 'You\'ve used your free voice sessions. Sign in for unlimited access!'
+                : 'Sign in for unlimited voice sessions'}
+            </p>
+            <a
+              href="/auth/sign-in"
+              className="block w-full text-center px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded font-medium"
+            >
+              Sign In
+            </a>
+            {!hasExceededLimit && (
+              <button
+                onClick={() => setShowLoginPrompt(false)}
+                className="mt-1 block w-full text-center text-gray-500 hover:text-gray-700 text-xs"
+              >
+                Continue as guest ({GUEST_SESSION_LIMIT - sessionCount} left)
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Only render VoiceProvider once we have the token
   return (
     <div className={wrapperClass}>
       <VoiceProvider
         onError={(err) => debug('Error', 'VoiceProvider error:', err)}
-        onOpen={() => debug('Status', 'VoiceProvider opened')}
+        onOpen={() => {
+          debug('Status', 'VoiceProvider opened');
+          onSessionStart();
+        }}
         onClose={(e) => debug('Status', 'VoiceProvider closed:', e)}
       >
         <VoiceButtonInner accessToken={accessToken} size={size} user={user} />
       </VoiceProvider>
       {variant === 'fixed' && (
         <span className="text-xs text-gray-500">Voice</span>
+      )}
+      {/* Show remaining sessions for guests */}
+      {isGuest && variant === 'inline' && sessionCount > 0 && (
+        <span className="text-xs text-amber-600">
+          {GUEST_SESSION_LIMIT - sessionCount} left
+        </span>
       )}
     </div>
   );

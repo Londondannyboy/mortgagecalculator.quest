@@ -18,9 +18,9 @@ const footerLinks = {
     links: [
       { label: 'First-Time Buyer', href: '/mortgage-types/first-time-buyer-mortgage' },
       { label: 'Buy to Let', href: '/mortgage-types/buy-to-let-mortgage' },
-      { label: 'Remortgage', href: '/mortgage-types/remortgage' },
       { label: 'Fixed Rate', href: '/mortgage-types/fixed-rate-mortgage' },
       { label: 'Tracker', href: '/mortgage-types/tracker-mortgage' },
+      { label: 'Remortgage Calculator', href: '/calculators/remortgage-calculator' },
       { label: 'All Mortgage Types', href: '/mortgage-types' },
     ],
   },
@@ -29,7 +29,9 @@ const footerLinks = {
     links: [
       { label: 'Mortgage Rates UK', href: '/mortgage-rates' },
       { label: 'Mortgage Guides', href: '/guides' },
-      { label: 'First-Time Buyer Guide', href: '/guides/first-time-buyer-guide' },
+      { label: 'Privacy Policy', href: '/privacy-policy' },
+      { label: 'Terms of Service', href: '/terms-of-service' },
+      { label: 'Data Policy', href: '/data-policy' },
     ],
   },
   external: {

@@ -172,25 +172,25 @@ export function MortgageCalculator({ state, onStateChange }: Props) {
 
       {/* Results */}
       {state.monthly_payment && (
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-          <h2 className="text-xl font-semibold mb-4">Your Monthly Payment</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <p className="text-blue-100 text-sm">Monthly Payment</p>
-              <p className="text-3xl font-bold">
-                £{state.monthly_payment.toLocaleString()}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg p-4 sm:p-6 text-white">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">Your Monthly Payment</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            <div className="text-center sm:text-left">
+              <p className="text-blue-100 text-xs sm:text-sm">Monthly Payment</p>
+              <p className="text-2xl sm:text-3xl font-bold truncate">
+                £{state.monthly_payment.toLocaleString('en-GB', { maximumFractionDigits: 0 })}
               </p>
             </div>
-            <div>
-              <p className="text-blue-100 text-sm">Total Interest</p>
-              <p className="text-3xl font-bold">
-                £{state.total_interest?.toLocaleString()}
+            <div className="text-center sm:text-left">
+              <p className="text-blue-100 text-xs sm:text-sm">Total Interest</p>
+              <p className="text-2xl sm:text-3xl font-bold truncate">
+                £{state.total_interest?.toLocaleString('en-GB', { maximumFractionDigits: 0 })}
               </p>
             </div>
-            <div>
-              <p className="text-blue-100 text-sm">Total Repayment</p>
-              <p className="text-3xl font-bold">
-                £{(state.principal + (state.total_interest || 0)).toLocaleString()}
+            <div className="text-center sm:text-left">
+              <p className="text-blue-100 text-xs sm:text-sm">Total Repayment</p>
+              <p className="text-2xl sm:text-3xl font-bold truncate">
+                £{(state.principal + (state.total_interest || 0)).toLocaleString('en-GB', { maximumFractionDigits: 0 })}
               </p>
             </div>
           </div>

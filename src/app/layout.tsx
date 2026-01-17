@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Providers } from "@/components/providers";
 import { Header, Footer } from "@/components/navigation";
+import { DisclaimerBanner } from "@/components/ui/DisclaimerBanner";
+import { CookieConsent } from "@/components/ui/CookieConsent";
 import "@copilotkit/react-ui/styles.css";
 import "./globals.css";
 
@@ -34,11 +36,13 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen flex flex-col">
         <Providers>
+          <DisclaimerBanner />
           <Header />
           <main className="pt-16 flex-grow">
             {children}
           </main>
           <Footer />
+          <CookieConsent />
         </Providers>
       </body>
     </html>
