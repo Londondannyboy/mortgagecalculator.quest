@@ -1,19 +1,19 @@
 import {
   CopilotRuntime,
   copilotRuntimeNextJSAppRouterEndpoint,
-  OpenAIAdapter,
+  ExperimentalEmptyAdapter,
 } from "@copilotkit/runtime";
-import { LangGraphHttpAgent } from "@copilotkit/runtime/langgraph";
+import { HttpAgent } from "@ag-ui/client";
 import { NextRequest } from "next/server";
 
-// Use OpenAI adapter as fallback for non-agent interactions
-const serviceAdapter = new OpenAIAdapter();
+// Use empty adapter since we're only using our Pydantic AI agent
+const serviceAdapter = new ExperimentalEmptyAdapter();
 
 // Create the HTTP agent that connects to our Pydantic AI backend
-const mortgageAgent = new LangGraphHttpAgent({
-  url: (process.env.AGENT_URL || "http://localhost:8000") + "/ag-ui",
-  agentId: "mortgage_agent",
-  description: "UK Mortgage Calculator Agent",
+// The agent exposes AG-UI protocol at /ag-ui endpoint
+const agentUrl = process.env.AGENT_URL || "http://localhost:8000";
+const mortgageAgent = new HttpAgent({
+  url: `${agentUrl}/ag-ui/`
 });
 
 const runtime = new CopilotRuntime({

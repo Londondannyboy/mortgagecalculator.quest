@@ -34,6 +34,13 @@ For details: `.claude/reference/architecture.md`
 | CopilotKit API | `src/app/api/copilotkit/route.ts` |
 | Pydantic AI Agent | `agent/src/agent.py` |
 | Agent tools | `calculate_mortgage`, `calculate_stamp_duty`, `compare_mortgages`, `calculate_affordability` |
+| Voice widget | `src/components/VoiceWidget.tsx` |
+| Header with voice | `src/components/navigation/Header.tsx` |
+| Hume token API | `src/app/api/hume-token/route.ts` |
+| ZEP user API | `src/app/api/zep/user/route.ts` |
+| Auth client | `src/lib/auth/client.ts` |
+| Auth routes | `src/app/api/auth/[...path]/route.ts` |
+| Profile page | `src/app/profile/page.tsx` |
 
 ---
 
@@ -64,8 +71,12 @@ For details: `.claude/reference/architecture.md`
 |-------|------------|
 | Frontend | Next.js 15, React 19, TypeScript, Tailwind |
 | AI Chat | CopilotKit (useCoAgent, useRenderToolCall) |
-| Agent | Pydantic AI with Google Gemini 2.0 Flash |
-| Protocol | AG-UI for frontend-agent communication |
+| Voice | Hume EVI with @humeai/voice-react |
+| Agent | Pydantic AI with Google Gemini 2.0 Flash (Railway) |
+| Protocol | AG-UI for frontend-agent, CLM for Hume voice |
+| Auth | Neon Auth (@neondatabase/auth) |
+| Memory | ZEP Cloud (graph: mortgage_calculator) |
+| Database | Neon PostgreSQL |
 
 ---
 
@@ -102,6 +113,17 @@ For details: `.claude/reference/architecture.md`
 # Frontend (.env.local)
 AGENT_URL=http://localhost:8000
 
+# Hume Voice
+HUME_API_KEY=uGiok...
+HUME_SECRET_KEY=gMqhK...
+NEXT_PUBLIC_HUME_CONFIG_ID=0e144dc9-623c-48fb-99ec-6a2a8b0fe08c
+
+# Neon Auth
+NEON_AUTH_BASE_URL=https://ep-purple-feather-ab7i4net.neonauth.eu-west-2.aws.neon.tech/neondb/auth
+
+# Zep Memory
+ZEP_API_KEY=z_1dWlk...
+
 # Agent (agent/.env)
 GOOGLE_API_KEY=AIzaSy...
 PORT=8000
@@ -122,6 +144,15 @@ PORT=8000
 ---
 
 ## Session Log
+
+### 2026-01-16
+- Added Neon Auth integration (sign in, profile page)
+- Added Hume Voice widget in header
+- Fixed voice widget - added `sendUserInput` after connection to trigger AI greeting
+- Created ZEP graph `mortgage_calculator` for user memory
+- Added `/api/zep/user` route for storing/fetching user facts
+- User context (name, ZEP memory) passed to voice system prompt
+- Deployed to Vercel with all env vars configured
 
 ### 2025-01-16
 - Project created using CLAUDE_STARTER_KIT template

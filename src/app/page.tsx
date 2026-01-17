@@ -73,6 +73,80 @@ export default function Home() {
           <p className="text-sm text-blue-600 dark:text-blue-400">
             Effective rate: {result.effective_rate}%
           </p>
+          {result.is_first_time_buyer && (
+            <p className="text-xs text-green-600 mt-1">First-time buyer relief applied</p>
+          )}
+          {result.is_additional_property && result.surcharge > 0 && (
+            <p className="text-xs text-orange-600 mt-1">+£{result.surcharge.toLocaleString()} additional property surcharge</p>
+          )}
+        </div>
+      );
+    },
+  });
+
+  // Render mortgage comparison results
+  useRenderToolCall({
+    name: "compare_mortgages",
+    render: ({ result }) => {
+      if (!result || !result.scenarios) return <></>;
+      return (
+        <div className="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-lg space-y-3">
+          <h3 className="font-semibold text-purple-800 dark:text-purple-200">Mortgage Comparison</h3>
+          <div className="grid gap-2">
+            {result.scenarios.map((scenario: { scenario: number; principal: number; annual_rate: number; term_years: number; monthly_payment: number; total_interest: number; monthly_diff?: number }, idx: number) => (
+              <div key={idx} className={`p-3 rounded ${idx === 0 ? 'bg-purple-100 dark:bg-purple-800' : 'bg-white dark:bg-gray-800'}`}>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Scenario {scenario.scenario}</span>
+                  <span className="text-lg font-bold text-purple-600">£{scenario.monthly_payment?.toLocaleString()}/mo</span>
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  £{scenario.principal?.toLocaleString()} at {scenario.annual_rate}% for {scenario.term_years} years
+                </div>
+                {scenario.monthly_diff !== undefined && scenario.monthly_diff !== 0 && (
+                  <div className={`text-xs mt-1 ${scenario.monthly_diff > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                    {scenario.monthly_diff > 0 ? '+' : ''}£{scenario.monthly_diff}/mo vs baseline
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          {result.lowest_total_interest && (
+            <p className="text-xs text-green-600 dark:text-green-400">
+              Best for total cost: Scenario {result.lowest_total_interest.scenario}
+            </p>
+          )}
+        </div>
+      );
+    },
+  });
+
+  // Render affordability calculation
+  useRenderToolCall({
+    name: "calculate_affordability",
+    render: ({ result }) => {
+      if (!result) return <></>;
+      return (
+        <div className="bg-emerald-50 dark:bg-emerald-900/30 p-4 rounded-lg">
+          <h3 className="font-semibold text-emerald-800 dark:text-emerald-200">Affordability Estimate</h3>
+          <div className="grid grid-cols-2 gap-4 mt-3">
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Standard (4x income)</p>
+              <p className="text-xl font-bold text-emerald-600">£{result.standard_mortgage?.toLocaleString()}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Maximum (4.5x income)</p>
+              <p className="text-xl font-bold text-emerald-700">£{result.max_mortgage?.toLocaleString()}</p>
+            </div>
+          </div>
+          {result.deposit > 0 && (
+            <div className="mt-3 pt-3 border-t border-emerald-200 dark:border-emerald-700">
+              <p className="text-xs text-gray-600 dark:text-gray-400">With your £{result.deposit?.toLocaleString()} deposit:</p>
+              <p className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
+                Property budget: £{result.standard_property_price?.toLocaleString()} - £{result.max_property_price?.toLocaleString()}
+              </p>
+            </div>
+          )}
+          <p className="text-xs text-gray-500 mt-2 italic">{result.note}</p>
         </div>
       );
     },
