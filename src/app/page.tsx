@@ -8,6 +8,15 @@ import { MortgageResultCard } from "@/components/MortgageResultCard";
 import { MortgageTimeline } from "@/components/MortgageTimeline";
 import { AmortizationChart } from "@/components/AmortizationChart";
 import { OverpaymentSimulator } from "@/components/OverpaymentSimulator";
+import {
+  HeroSection,
+  CalculatorShowcase,
+  StatsSection,
+  RatesOverview,
+  TopicClusters,
+  FAQSection,
+} from "@/components/home";
+import Script from "next/script";
 
 interface MortgageState {
   principal: number;
@@ -20,6 +29,29 @@ interface MortgageState {
 }
 
 type TabType = 'calculator' | 'timeline' | 'amortization' | 'overpayment';
+
+// Schema.org markup for SEO
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Mortgage Calculator Quest",
+  url: "https://mortgagecalculator.quest",
+  description: "Free UK mortgage calculators with AI assistance. Calculate mortgage payments, stamp duty, affordability and more.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://mortgagecalculator.quest/calculators?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Mortgage Calculator Quest",
+  url: "https://mortgagecalculator.quest",
+  logo: "https://mortgagecalculator.quest/favicon.svg",
+  sameAs: []
+};
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>('calculator');
@@ -181,115 +213,154 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <CopilotSidebar
-        instructions={instructions}
-        labels={{
-          title: "Mortgage Assistant",
-          initial: "Hi! I can help you calculate mortgage payments, stamp duty, and plan your path to mortgage freedom. What would you like to know?",
-        }}
-      >
-        <main className="container mx-auto px-4 py-8 max-w-6xl">
-          <header className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-              Mortgage Calculator
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Calculate your UK mortgage payments with AI assistance
-            </p>
-          </header>
+    <>
+      {/* Schema.org markup */}
+      <Script
+        id="website-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
 
-          {/* Tab Navigation */}
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-lg">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`
-                    px-4 py-2 rounded-lg text-sm font-medium transition-all
-                    ${activeTab === tab.id
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }
-                  `}
-                >
-                  <span className="mr-1">{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        {/* Hero Section */}
+        <HeroSection />
 
-          {/* Tab Content */}
-          <div className="space-y-8">
-            {activeTab === 'calculator' && state && (
-              <MortgageCalculator
-                state={state}
-                onStateChange={(updates) => setState((prev) => ({ ...state, ...prev, ...updates }))}
-              />
-            )}
+        {/* Stats Section */}
+        <StatsSection />
 
-            {activeTab === 'timeline' && (
-              <MortgageTimeline
-                principal={state?.principal || 300000}
-                interestRate={state?.interest_rate || 4.5}
-                termYears={state?.term_years || 25}
-              />
-            )}
+        {/* Main Calculator Section */}
+        <section id="calculator" className="py-20 bg-white dark:bg-gray-800">
+          <CopilotSidebar
+            instructions={instructions}
+            labels={{
+              title: "Mortgage Assistant",
+              initial: "Hi! I can help you calculate mortgage payments, stamp duty, and plan your path to mortgage freedom. What would you like to know?",
+            }}
+          >
+            <div className="container mx-auto px-4 max-w-6xl">
+              <div className="text-center mb-12">
+                <span className="inline-block px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
+                  AI-Powered
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  UK Mortgage Calculator
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  Calculate your mortgage payments with AI assistance. Ask questions, compare scenarios,
+                  and get personalised insights.
+                </p>
+              </div>
 
-            {activeTab === 'amortization' && (
-              <AmortizationChart
-                principal={state?.principal || 300000}
-                interestRate={state?.interest_rate || 4.5}
-                termYears={state?.term_years || 25}
-              />
-            )}
-
-            {activeTab === 'overpayment' && (
-              <OverpaymentSimulator
-                principal={state?.principal || 300000}
-                interestRate={state?.interest_rate || 4.5}
-                termYears={state?.term_years || 25}
-                monthlyPayment={monthlyPayment}
-              />
-            )}
-          </div>
-
-          {/* Quick Stats Footer */}
-          {state && (
-            <div className="mt-8 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Loan Amount</p>
-                  <p className="text-lg font-bold text-gray-800 dark:text-white">
-                    £{(state.principal || 0).toLocaleString()}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Interest Rate</p>
-                  <p className="text-lg font-bold text-gray-800 dark:text-white">
-                    {state.interest_rate || 0}%
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Term</p>
-                  <p className="text-lg font-bold text-gray-800 dark:text-white">
-                    {state.term_years || 0} years
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Monthly Payment</p>
-                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                    £{monthlyPayment.toLocaleString('en-GB', { maximumFractionDigits: 0 })}
-                  </p>
+              {/* Tab Navigation */}
+              <div className="flex justify-center mb-8">
+                <div className="inline-flex bg-gray-100 dark:bg-gray-700 rounded-xl p-1 shadow-inner">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`
+                        px-4 py-2 rounded-lg text-sm font-medium transition-all
+                        ${activeTab === tab.id
+                          ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-md'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
+                        }
+                      `}
+                    >
+                      <span className="mr-1">{tab.icon}</span>
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
               </div>
+
+              {/* Tab Content */}
+              <div className="space-y-8">
+                {activeTab === 'calculator' && state && (
+                  <MortgageCalculator
+                    state={state}
+                    onStateChange={(updates) => setState((prev) => ({ ...state, ...prev, ...updates }))}
+                  />
+                )}
+
+                {activeTab === 'timeline' && (
+                  <MortgageTimeline
+                    principal={state?.principal || 300000}
+                    interestRate={state?.interest_rate || 4.5}
+                    termYears={state?.term_years || 25}
+                  />
+                )}
+
+                {activeTab === 'amortization' && (
+                  <AmortizationChart
+                    principal={state?.principal || 300000}
+                    interestRate={state?.interest_rate || 4.5}
+                    termYears={state?.term_years || 25}
+                  />
+                )}
+
+                {activeTab === 'overpayment' && (
+                  <OverpaymentSimulator
+                    principal={state?.principal || 300000}
+                    interestRate={state?.interest_rate || 4.5}
+                    termYears={state?.term_years || 25}
+                    monthlyPayment={monthlyPayment}
+                  />
+                )}
+              </div>
+
+              {/* Quick Stats Footer */}
+              {state && (
+                <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Loan Amount</p>
+                      <p className="text-lg font-bold text-gray-800 dark:text-white">
+                        £{(state.principal || 0).toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Interest Rate</p>
+                      <p className="text-lg font-bold text-gray-800 dark:text-white">
+                        {state.interest_rate || 0}%
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Term</p>
+                      <p className="text-lg font-bold text-gray-800 dark:text-white">
+                        {state.term_years || 0} years
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Monthly Payment</p>
+                      <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                        £{monthlyPayment.toLocaleString('en-GB', { maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </main>
-      </CopilotSidebar>
-    </div>
+          </CopilotSidebar>
+        </section>
+
+        {/* Calculator Showcase */}
+        <CalculatorShowcase />
+
+        {/* Rates Overview */}
+        <RatesOverview />
+
+        {/* Topic Clusters */}
+        <TopicClusters />
+
+        {/* FAQ Section */}
+        <FAQSection />
+      </div>
+    </>
   );
 }
 
