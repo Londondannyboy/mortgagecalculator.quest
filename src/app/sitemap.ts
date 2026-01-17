@@ -24,83 +24,46 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily' as const,
       priority: 0.9,
     },
-  ]
-
-  // Calculator pages - high priority, frequently updated
-  const calculatorPages = [
-    'stamp-duty-calculator',
-    'mortgage-overpayment-calculator',
-    'mortgage-repayment-calculator',
-    'how-much-can-i-borrow-calculator',
-    'buy-to-let-mortgage-calculator',
-    'remortgage-calculator',
-  ].map((slug) => ({
-    url: `${baseUrl}/calculators/${slug}`,
-    lastModified: currentDate,
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }))
-
-  // Mortgage types pages
-  const mortgageTypePages = [
-    {
-      url: `${baseUrl}/mortgage-types`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/mortgage-types/first-time-buyer-mortgage`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/mortgage-types/buy-to-let-mortgage`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8, // High search volume: 40K
-    },
-    {
-      url: `${baseUrl}/mortgage-types/fixed-rate-mortgage`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/mortgage-types/tracker-mortgage`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-  ]
-
-  // Guide pages
-  const guidePages = [
     {
       url: `${baseUrl}/guides`,
       lastModified: currentDate,
       changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/guides/first-time-buyer-guide`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/guides/remortgage-guide`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
+      priority: 0.8,
     },
   ]
+
+  // Calculator pages - high priority, frequently updated
+  const calculatorPages = [
+    { slug: 'stamp-duty-calculator', priority: 0.9 }, // 368K search volume
+    { slug: 'mortgage-repayment-calculator', priority: 0.9 }, // 110K search volume
+    { slug: 'mortgage-overpayment-calculator', priority: 0.85 }, // 74K search volume
+    { slug: 'how-much-can-i-borrow-calculator', priority: 0.85 }, // 60K search volume
+    { slug: 'buy-to-let-mortgage-calculator', priority: 0.85 }, // 27K search volume
+    { slug: 'remortgage-calculator', priority: 0.85 }, // 27K search volume
+  ].map(({ slug, priority }) => ({
+    url: `${baseUrl}/calculators/${slug}`,
+    lastModified: currentDate,
+    changeFrequency: 'weekly' as const,
+    priority,
+  }))
+
+  // Mortgage types pages
+  const mortgageTypePages = [
+    { path: '/mortgage-types', priority: 0.8 },
+    { path: '/mortgage-types/buy-to-let-mortgage', priority: 0.85 }, // 40K search volume
+    { path: '/mortgage-types/fixed-rate-mortgage', priority: 0.8 }, // 10K search volume
+    { path: '/mortgage-types/first-time-buyer-mortgage', priority: 0.8 }, // 8K search volume
+    { path: '/mortgage-types/tracker-mortgage', priority: 0.75 }, // 3.6K search volume
+  ].map(({ path, priority }) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: currentDate,
+    changeFrequency: 'weekly' as const,
+    priority,
+  }))
 
   return [
     ...corePages,
     ...calculatorPages,
     ...mortgageTypePages,
-    ...guidePages,
   ]
 }
