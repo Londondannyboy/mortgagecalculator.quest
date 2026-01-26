@@ -168,6 +168,68 @@ export function TopicClusters() {
             </Link>
           </div>
         </div>
+
+        {/* Related Property Tools */}
+        <div className="mt-16">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Related Property Tools
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              Essential calculators for your property journey
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a
+              href="https://stampdutycalculator.quest"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-50 dark:bg-gray-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl p-5 border border-gray-100 dark:border-gray-700 transition-all group"
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-2xl">🏠</span>
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Stamp Duty Calculator
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Calculate UK SDLT, LBTT, and LTT for your property purchase</p>
+                </div>
+              </div>
+            </a>
+            <a
+              href="https://rentvsbuycalculator.quest"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-50 dark:bg-gray-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl p-5 border border-gray-100 dark:border-gray-700 transition-all group"
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-2xl">⚖️</span>
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    Rent vs Buy Calculator
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Compare the true cost of renting versus buying over time</p>
+                </div>
+              </div>
+            </a>
+            <a
+              href="https://childcarecalculator.quest"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-50 dark:bg-gray-700/50 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl p-5 border border-gray-100 dark:border-gray-700 transition-all group"
+            >
+              <div className="flex items-start gap-4">
+                <span className="text-2xl">👶</span>
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                    Childcare Calculator
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Calculate childcare costs and tax-free childcare entitlement</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   )
